@@ -1,0 +1,3590 @@
+{
+  "Jugador_1": {
+    "nombre": "Jugador 1",
+    "grupos": [
+      {
+        "code": "A1",
+        "match": "México-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 1
+        }
+      },
+      {
+        "code": "A1",
+        "match": "Corea del Sur-República Checa",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Canadá-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Catar-Suiza",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 4
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Brasil-Marruecos",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Haití-Escocia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Estados Unidos-Paraguay",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Australia-Turquía",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Alemania-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 4,
+          "away": 0
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Costa de Marfil-Ecuador",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Países Bajos-Japón",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Suecia-Túnez",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Bélgica-Egipto",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Irán-Nueva Zelanda",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "H1",
+        "match": "España-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "H1",
+        "match": "Arabia Saudita-Uruguay",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 3
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Francia-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Irak-Noruega",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Argentina-Argelia",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Austria-Jordania",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Portugal-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 4,
+          "away": 0
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Uzbekistán-Colombia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Inglaterra-Croacia",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Ghana-Panamá",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "A2",
+        "match": "República Checa-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "A2",
+        "match": "México-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Suiza-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Canadá-Catar",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Escocia-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Brasil-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 5,
+          "away": 0
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Estados Unidos-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Turquía-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 1
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Alemania-Costa de Marfil",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Ecuador-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Países Bajos-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Túnez-Japón",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Bélgica-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Nueva Zelanda-Egipto",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "H2",
+        "match": "España-Arabia Saudita",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "H2",
+        "match": "Uruguay-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Francia-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 4,
+          "away": 0
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Noruega-Senegal",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Argentina-Austria",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Jordania-Argelia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 3
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Portugal-Uzbekistán",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Colombia-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Inglaterra-Ghana",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Panamá-Croacia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "A3",
+        "match": "República Checa-México",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "A3",
+        "match": "Sudáfrica-Corea del Sur",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Suiza-Canadá",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Bosnia y Herzegovina-Catar",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Escocia-Brasil",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Marruecos-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 5,
+          "away": 1
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Turquía-Estados Unidos",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Paraguay-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Curazao-Costa de Marfil",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Ecuador-Alemania",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Japón-Suecia",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Túnez-Países Bajos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Egipto-Irán",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Nueva Zelanda-Bélgica",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 3
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Cabo Verde-Arabia Saudita",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Uruguay-España",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Noruega-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Senegal-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Argelia-Austria",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Jordania-Argentina",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 4
+        }
+      },
+      {
+        "code": "K3",
+        "match": "Colombia-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "K3",
+        "match": "RD Congo-Uzbekistán",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Panamá-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 3
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Croacia-Ghana",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      }
+    ],
+    "posiciones_grupos": [
+      {
+        "pos": "1º GRUPO A",
+        "team": "México"
+      },
+      {
+        "pos": "2º GRUPO A",
+        "team": "República Checa"
+      },
+      {
+        "pos": "3º GRUPO A",
+        "team": "Corea del Sur"
+      },
+      {
+        "pos": "4º GRUPO A",
+        "team": "Sudáfrica"
+      },
+      {
+        "pos": "1º GRUPO B",
+        "team": "Suiza"
+      },
+      {
+        "pos": "2º GRUPO B",
+        "team": "Canadá"
+      },
+      {
+        "pos": "3º GRUPO B",
+        "team": "Bosnia y Herzegovina"
+      },
+      {
+        "pos": "4º GRUPO B",
+        "team": "Catar"
+      },
+      {
+        "pos": "1º GRUPO C",
+        "team": "Brasil"
+      },
+      {
+        "pos": "2º GRUPO C",
+        "team": "Marruecos"
+      },
+      {
+        "pos": "3º GRUPO C",
+        "team": "Escocia"
+      },
+      {
+        "pos": "4º GRUPO C",
+        "team": "Haití"
+      },
+      {
+        "pos": "1º GRUPO D",
+        "team": "Turquía"
+      },
+      {
+        "pos": "2º GRUPO D",
+        "team": "Estados Unidos"
+      },
+      {
+        "pos": "3º GRUPO D",
+        "team": "Paraguay"
+      },
+      {
+        "pos": "4º GRUPO D",
+        "team": "Australia"
+      },
+      {
+        "pos": "1º GRUPO E",
+        "team": "Alemania"
+      },
+      {
+        "pos": "2º GRUPO E",
+        "team": "Ecuador"
+      },
+      {
+        "pos": "3º GRUPO E",
+        "team": "Costa de Marfil"
+      },
+      {
+        "pos": "4º GRUPO E",
+        "team": "Curazao"
+      },
+      {
+        "pos": "1º GRUPO F",
+        "team": "Países Bajos"
+      },
+      {
+        "pos": "2º GRUPO F",
+        "team": "Japón"
+      },
+      {
+        "pos": "3º GRUPO F",
+        "team": "Suecia"
+      },
+      {
+        "pos": "4º GRUPO F",
+        "team": "Túnez"
+      },
+      {
+        "pos": "1º GRUPO G",
+        "team": "Bélgica"
+      },
+      {
+        "pos": "2º GRUPO G",
+        "team": "Egipto"
+      },
+      {
+        "pos": "3º GRUPO G",
+        "team": "Irán"
+      },
+      {
+        "pos": "4º GRUPO G",
+        "team": "Nueva Zelanda"
+      },
+      {
+        "pos": "1º GRUPO H",
+        "team": "España"
+      },
+      {
+        "pos": "2º GRUPO H",
+        "team": "Uruguay"
+      },
+      {
+        "pos": "3º GRUPO H",
+        "team": "Arabia Saudita"
+      },
+      {
+        "pos": "4º GRUPO H",
+        "team": "Cabo Verde"
+      },
+      {
+        "pos": "1º GRUPO I",
+        "team": "Francia"
+      },
+      {
+        "pos": "2º GRUPO I",
+        "team": "Senegal"
+      },
+      {
+        "pos": "3º GRUPO I",
+        "team": "Noruega"
+      },
+      {
+        "pos": "4º GRUPO I",
+        "team": "Irak"
+      },
+      {
+        "pos": "1º GRUPO J",
+        "team": "Argentina"
+      },
+      {
+        "pos": "2º GRUPO J",
+        "team": "Argelia"
+      },
+      {
+        "pos": "3º GRUPO J",
+        "team": "Austria"
+      },
+      {
+        "pos": "4º GRUPO J",
+        "team": "Jordania"
+      },
+      {
+        "pos": "1º GRUPO K",
+        "team": "Portugal"
+      },
+      {
+        "pos": "2º GRUPO K",
+        "team": "Colombia"
+      },
+      {
+        "pos": "3º GRUPO K",
+        "team": "RD Congo"
+      },
+      {
+        "pos": "4º GRUPO K",
+        "team": "Uzbekistán"
+      },
+      {
+        "pos": "1º GRUPO L",
+        "team": "Inglaterra"
+      },
+      {
+        "pos": "2º GRUPO L",
+        "team": "Croacia"
+      },
+      {
+        "pos": "3º GRUPO L",
+        "team": "Ghana"
+      },
+      {
+        "pos": "4º GRUPO L",
+        "team": "Panamá"
+      }
+    ],
+    "clasif_dieciseisavos": [
+      "República Checa",
+      "Brasil",
+      "Alemania",
+      "Países Bajos",
+      "Ecuador",
+      "Francia",
+      "México",
+      "Inglaterra",
+      "Bélgica",
+      "Turquía",
+      "España",
+      "Colombia",
+      "Suiza",
+      "Estados Unidos",
+      "Argentina",
+      "Portugal",
+      "Canadá",
+      "Japón",
+      "Paraguay",
+      "Marruecos",
+      "Senegal",
+      "Irán",
+      "Costa de Marfil",
+      "Noruega",
+      "Corea del Sur",
+      "Bosnia y Herzegovina",
+      "Argelia",
+      "Croacia",
+      "Austria",
+      "Egipto",
+      "Uruguay",
+      "Ghana"
+    ],
+    "cruces_dieciseisavos": [
+      {
+        "match": "República Checa-Canadá",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "match": "Brasil-Japón",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Alemania-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Países Bajos-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Ecuador-Senegal",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Francia-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "match": "México-Costa de Marfil",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Inglaterra-Noruega",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "match": "Bélgica-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Turquía-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "España-Argelia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Colombia-Croacia",
+        "pred": {
+          "sign": "X",
+          "home": 0,
+          "away": 0
+        }
+      },
+      {
+        "match": "Suiza-Austria",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Estados Unidos-Egipto",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Argentina-Uruguay",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Portugal-Ghana",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      }
+    ],
+    "clasif_octavos": [
+      "Canadá",
+      "Alemania",
+      "Brasil",
+      "México",
+      "Colombia",
+      "Turquía",
+      "Argentina",
+      "Austria",
+      "Marruecos",
+      "Francia",
+      "Senegal",
+      "Inglaterra",
+      "España",
+      "Bélgica",
+      "Estados Unidos",
+      "Portugal"
+    ],
+    "cruces_octavos": [
+      {
+        "match": "Canadá-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Alemania-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Brasil-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "match": "México-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Colombia-España",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Turquía-Bélgica",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Argentina-Estados Unidos",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "match": "Austria-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_cuartos": [
+      "Francia",
+      "España",
+      "Brasil",
+      "Argentina",
+      "Marruecos",
+      "Turquía",
+      "Inglaterra",
+      "Portugal"
+    ],
+    "cruces_cuartos": [
+      {
+        "match": "Francia-Marruecos",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "España-Turquía",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "match": "Brasil-Inglaterra",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_semis": [
+      "Francia",
+      "Brasil",
+      "España",
+      "Portugal"
+    ],
+    "cruces_semis": [
+      {
+        "match": "Francia-España",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Brasil-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_34": [
+      "Francia",
+      "Brasil"
+    ],
+    "finalistas": [
+      "España",
+      "Portugal"
+    ],
+    "partido_34": {
+      "match": "Francia-Brasil",
+      "pred": {
+        "sign": "1",
+        "home": 1,
+        "away": 0
+      }
+    },
+    "partido_final": {
+      "match": "España-Portugal",
+      "pred": {
+        "sign": "1",
+        "home": 1,
+        "away": 0
+      }
+    },
+    "campeon": "España",
+    "subcampeon": "Portugal",
+    "tercero": "Francia",
+    "bota_oro": "Cristiano",
+    "bota_plata": "Mbappe",
+    "bota_bronce": "Harry Kane",
+    "balon_oro": "Pedri",
+    "balon_plata": "Vitinha",
+    "balon_bronce": "Mbappe"
+  },
+  "Jugador_2": {
+    "nombre": "Jugador 2",
+    "grupos": [
+      {
+        "code": "A1",
+        "match": "México-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "A1",
+        "match": "Corea del Sur-República Checa",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Canadá-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Catar-Suiza",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Brasil-Marruecos",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Haití-Escocia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Estados Unidos-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Australia-Turquía",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Alemania-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Costa de Marfil-Ecuador",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Países Bajos-Japón",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Suecia-Túnez",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Bélgica-Egipto",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Irán-Nueva Zelanda",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "H1",
+        "match": "España-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "H1",
+        "match": "Arabia Saudita-Uruguay",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Francia-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Irak-Noruega",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 3
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Argentina-Argelia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Austria-Jordania",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Portugal-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Uzbekistán-Colombia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Inglaterra-Croacia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Ghana-Panamá",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "A2",
+        "match": "República Checa-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "A2",
+        "match": "México-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Suiza-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Canadá-Catar",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Escocia-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Brasil-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Estados Unidos-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Turquía-Paraguay",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Alemania-Costa de Marfil",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Ecuador-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Países Bajos-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Túnez-Japón",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Bélgica-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Nueva Zelanda-Egipto",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "H2",
+        "match": "España-Arabia Saudita",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "H2",
+        "match": "Uruguay-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Francia-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Noruega-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Argentina-Austria",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Jordania-Argelia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Portugal-Uzbekistán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Colombia-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Inglaterra-Ghana",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Panamá-Croacia",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "A3",
+        "match": "República Checa-México",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "A3",
+        "match": "Sudáfrica-Corea del Sur",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Suiza-Canadá",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Bosnia y Herzegovina-Catar",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Escocia-Brasil",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Marruecos-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Turquía-Estados Unidos",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Paraguay-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Curazao-Costa de Marfil",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Ecuador-Alemania",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Japón-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Túnez-Países Bajos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Egipto-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Nueva Zelanda-Bélgica",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 3
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Cabo Verde-Arabia Saudita",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Uruguay-España",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Noruega-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Senegal-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Argelia-Austria",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Jordania-Argentina",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 3
+        }
+      },
+      {
+        "code": "K3",
+        "match": "Colombia-Portugal",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "code": "K3",
+        "match": "RD Congo-Uzbekistán",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Panamá-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Croacia-Ghana",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      }
+    ],
+    "posiciones_grupos": [
+      {
+        "pos": "1º GRUPO A",
+        "team": "México"
+      },
+      {
+        "pos": "2º GRUPO A",
+        "team": "República Checa"
+      },
+      {
+        "pos": "3º GRUPO A",
+        "team": "Corea del Sur"
+      },
+      {
+        "pos": "4º GRUPO A",
+        "team": "Sudáfrica"
+      },
+      {
+        "pos": "1º GRUPO B",
+        "team": "Suiza"
+      },
+      {
+        "pos": "2º GRUPO B",
+        "team": "Canadá"
+      },
+      {
+        "pos": "3º GRUPO B",
+        "team": "Bosnia y Herzegovina"
+      },
+      {
+        "pos": "4º GRUPO B",
+        "team": "Catar"
+      },
+      {
+        "pos": "1º GRUPO C",
+        "team": "Brasil"
+      },
+      {
+        "pos": "2º GRUPO C",
+        "team": "Marruecos"
+      },
+      {
+        "pos": "3º GRUPO C",
+        "team": "Escocia"
+      },
+      {
+        "pos": "4º GRUPO C",
+        "team": "Haití"
+      },
+      {
+        "pos": "1º GRUPO D",
+        "team": "Estados Unidos"
+      },
+      {
+        "pos": "2º GRUPO D",
+        "team": "Turquía"
+      },
+      {
+        "pos": "3º GRUPO D",
+        "team": "Paraguay"
+      },
+      {
+        "pos": "4º GRUPO D",
+        "team": "Australia"
+      },
+      {
+        "pos": "1º GRUPO E",
+        "team": "Alemania"
+      },
+      {
+        "pos": "2º GRUPO E",
+        "team": "Ecuador"
+      },
+      {
+        "pos": "3º GRUPO E",
+        "team": "Costa de Marfil"
+      },
+      {
+        "pos": "4º GRUPO E",
+        "team": "Curazao"
+      },
+      {
+        "pos": "1º GRUPO F",
+        "team": "Países Bajos"
+      },
+      {
+        "pos": "2º GRUPO F",
+        "team": "Japón"
+      },
+      {
+        "pos": "3º GRUPO F",
+        "team": "Suecia"
+      },
+      {
+        "pos": "4º GRUPO F",
+        "team": "Túnez"
+      },
+      {
+        "pos": "1º GRUPO G",
+        "team": "Bélgica"
+      },
+      {
+        "pos": "2º GRUPO G",
+        "team": "Egipto"
+      },
+      {
+        "pos": "3º GRUPO G",
+        "team": "Irán"
+      },
+      {
+        "pos": "4º GRUPO G",
+        "team": "Nueva Zelanda"
+      },
+      {
+        "pos": "1º GRUPO H",
+        "team": "España"
+      },
+      {
+        "pos": "2º GRUPO H",
+        "team": "Uruguay"
+      },
+      {
+        "pos": "3º GRUPO H",
+        "team": "Arabia Saudita"
+      },
+      {
+        "pos": "4º GRUPO H",
+        "team": "Cabo Verde"
+      },
+      {
+        "pos": "1º GRUPO I",
+        "team": "Francia"
+      },
+      {
+        "pos": "2º GRUPO I",
+        "team": "Noruega"
+      },
+      {
+        "pos": "3º GRUPO I",
+        "team": "Senegal"
+      },
+      {
+        "pos": "4º GRUPO I",
+        "team": "Irak"
+      },
+      {
+        "pos": "1º GRUPO J",
+        "team": "Argentina"
+      },
+      {
+        "pos": "2º GRUPO J",
+        "team": "Austria"
+      },
+      {
+        "pos": "3º GRUPO J",
+        "team": "Argelia"
+      },
+      {
+        "pos": "4º GRUPO J",
+        "team": "Jordania"
+      },
+      {
+        "pos": "1º GRUPO K",
+        "team": "Portugal"
+      },
+      {
+        "pos": "2º GRUPO K",
+        "team": "Colombia"
+      },
+      {
+        "pos": "3º GRUPO K",
+        "team": "RD Congo"
+      },
+      {
+        "pos": "4º GRUPO K",
+        "team": "Uzbekistán"
+      },
+      {
+        "pos": "1º GRUPO L",
+        "team": "Inglaterra"
+      },
+      {
+        "pos": "2º GRUPO L",
+        "team": "Croacia"
+      },
+      {
+        "pos": "3º GRUPO L",
+        "team": "Ghana"
+      },
+      {
+        "pos": "4º GRUPO L",
+        "team": "Panamá"
+      }
+    ],
+    "clasif_dieciseisavos": [
+      "República Checa",
+      "Brasil",
+      "Alemania",
+      "Países Bajos",
+      "Ecuador",
+      "Francia",
+      "México",
+      "Inglaterra",
+      "Bélgica",
+      "Estados Unidos",
+      "España",
+      "Colombia",
+      "Suiza",
+      "Turquía",
+      "Argentina",
+      "Portugal",
+      "Canadá",
+      "Japón",
+      "Paraguay",
+      "Marruecos",
+      "Noruega",
+      "Suecia",
+      "Escocia",
+      "Senegal",
+      "Corea del Sur",
+      "Bosnia y Herzegovina",
+      "Austria",
+      "Croacia",
+      "Argelia",
+      "Egipto",
+      "Uruguay",
+      "Costa de Marfil"
+    ],
+    "cruces_dieciseisavos": [
+      {
+        "match": "República Checa-Canadá",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Brasil-Japón",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Alemania-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Países Bajos-Marruecos",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "match": "Ecuador-Noruega",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Francia-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 1
+        }
+      },
+      {
+        "match": "México-Escocia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Inglaterra-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Bélgica-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Estados Unidos-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "España-Austria",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Colombia-Croacia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Suiza-Argelia",
+        "pred": {
+          "sign": "1",
+          "home": 1,
+          "away": 0
+        }
+      },
+      {
+        "match": "Turquía-Egipto",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Uruguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Portugal-Costa de Marfil",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_octavos": [
+      "Canadá",
+      "Alemania",
+      "Brasil",
+      "México",
+      "Colombia",
+      "Estados Unidos",
+      "Argentina",
+      "Suiza",
+      "Marruecos",
+      "Francia",
+      "Noruega",
+      "Inglaterra",
+      "España",
+      "Bélgica",
+      "Turquía",
+      "Portugal"
+    ],
+    "cruces_octavos": [
+      {
+        "match": "Canadá-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 1
+        }
+      },
+      {
+        "match": "Alemania-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Brasil-Noruega",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "México-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Colombia-España",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Estados Unidos-Bélgica",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Argentina-Turquía",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Suiza-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 0,
+          "away": 2
+        }
+      }
+    ],
+    "clasif_cuartos": [
+      "Francia",
+      "España",
+      "Brasil",
+      "Argentina",
+      "Marruecos",
+      "Bélgica",
+      "Inglaterra",
+      "Portugal"
+    ],
+    "cruces_cuartos": [
+      {
+        "match": "Francia-Marruecos",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "España-Bélgica",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 0
+        }
+      },
+      {
+        "match": "Brasil-Inglaterra",
+        "pred": {
+          "sign": "X",
+          "home": 1,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Portugal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_semis": [
+      "Francia",
+      "Inglaterra",
+      "España",
+      "Argentina"
+    ],
+    "cruces_semis": [
+      {
+        "match": "Francia-España",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Inglaterra-Argentina",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      }
+    ],
+    "clasif_34": [
+      "Francia",
+      "Inglaterra"
+    ],
+    "finalistas": [
+      "España",
+      "Argentina"
+    ],
+    "partido_34": {
+      "match": "Francia-Inglaterra",
+      "pred": {
+        "sign": "1",
+        "home": 2,
+        "away": 1
+      }
+    },
+    "partido_final": {
+      "match": "España-Argentina",
+      "pred": {
+        "sign": "1",
+        "home": 2,
+        "away": 1
+      }
+    },
+    "campeon": "España",
+    "subcampeon": "Argentina",
+    "tercero": "Francia",
+    "bota_oro": "Kylian Mbappé",
+    "bota_plata": "Harry Kane",
+    "bota_bronce": "Erling Haaland",
+    "balon_oro": "Lamine Yamal",
+    "balon_plata": "Lionel Messi",
+    "balon_bronce": "Pedri"
+  },
+  "Jugador_3": {
+    "nombre": "Jugador 3",
+    "grupos": [
+      {
+        "code": "A1",
+        "match": "México-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "A1",
+        "match": "Corea del Sur-República Checa",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Canadá-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B1",
+        "match": "Catar-Suiza",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 4
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Brasil-Marruecos",
+        "pred": {
+          "sign": "X",
+          "home": 2,
+          "away": 2
+        }
+      },
+      {
+        "code": "C1",
+        "match": "Haití-Escocia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 3
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Estados Unidos-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "D1",
+        "match": "Australia-Turquía",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Alemania-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 4,
+          "away": 0
+        }
+      },
+      {
+        "code": "E1",
+        "match": "Costa de Marfil-Ecuador",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Países Bajos-Japón",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F1",
+        "match": "Suecia-Túnez",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Bélgica-Egipto",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "G1",
+        "match": "Irán-Nueva Zelanda",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "H1",
+        "match": "España-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "H1",
+        "match": "Arabia Saudita-Uruguay",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Francia-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "I1",
+        "match": "Irak-Noruega",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Argentina-Argelia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J1",
+        "match": "Austria-Jordania",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Portugal-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "K1",
+        "match": "Uzbekistán-Colombia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Inglaterra-Croacia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "L1",
+        "match": "Ghana-Panamá",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "A2",
+        "match": "República Checa-Sudáfrica",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "A2",
+        "match": "México-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Suiza-Bosnia y Herzegovina",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B2",
+        "match": "Canadá-Catar",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Escocia-Marruecos",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "C2",
+        "match": "Brasil-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Estados Unidos-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "D2",
+        "match": "Turquía-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Alemania-Costa de Marfil",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "E2",
+        "match": "Ecuador-Curazao",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 0
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Países Bajos-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F2",
+        "match": "Túnez-Japón",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Bélgica-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "G2",
+        "match": "Nueva Zelanda-Egipto",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "H2",
+        "match": "España-Arabia Saudita",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "H2",
+        "match": "Uruguay-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Francia-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "I2",
+        "match": "Noruega-Senegal",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Argentina-Austria",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J2",
+        "match": "Jordania-Argelia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Portugal-Uzbekistán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "K2",
+        "match": "Colombia-RD Congo",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Inglaterra-Ghana",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "L2",
+        "match": "Panamá-Croacia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "A3",
+        "match": "República Checa-México",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "A3",
+        "match": "Sudáfrica-Corea del Sur",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Suiza-Canadá",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "B3",
+        "match": "Bosnia y Herzegovina-Catar",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Escocia-Brasil",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "C3",
+        "match": "Marruecos-Haití",
+        "pred": {
+          "sign": "1",
+          "home": 3,
+          "away": 1
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Turquía-Estados Unidos",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "D3",
+        "match": "Paraguay-Australia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Curazao-Costa de Marfil",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "E3",
+        "match": "Ecuador-Alemania",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Japón-Suecia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "F3",
+        "match": "Túnez-Países Bajos",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Egipto-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "G3",
+        "match": "Nueva Zelanda-Bélgica",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Cabo Verde-Arabia Saudita",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "H3",
+        "match": "Uruguay-España",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Noruega-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "I3",
+        "match": "Senegal-Irak",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Argelia-Austria",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "code": "J3",
+        "match": "Jordania-Argentina",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "K3",
+        "match": "Colombia-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "K3",
+        "match": "RD Congo-Uzbekistán",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Panamá-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "code": "L3",
+        "match": "Croacia-Ghana",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      }
+    ],
+    "posiciones_grupos": [
+      {
+        "pos": "1º GRUPO A",
+        "team": "México"
+      },
+      {
+        "pos": "2º GRUPO A",
+        "team": "Corea del Sur"
+      },
+      {
+        "pos": "3º GRUPO A",
+        "team": "República Checa"
+      },
+      {
+        "pos": "4º GRUPO A",
+        "team": "Sudáfrica"
+      },
+      {
+        "pos": "1º GRUPO B",
+        "team": "Suiza"
+      },
+      {
+        "pos": "2º GRUPO B",
+        "team": "Canadá"
+      },
+      {
+        "pos": "3º GRUPO B",
+        "team": "Catar"
+      },
+      {
+        "pos": "4º GRUPO B",
+        "team": "Bosnia y Herzegovina"
+      },
+      {
+        "pos": "1º GRUPO C",
+        "team": "Marruecos"
+      },
+      {
+        "pos": "2º GRUPO C",
+        "team": "Brasil"
+      },
+      {
+        "pos": "3º GRUPO C",
+        "team": "Escocia"
+      },
+      {
+        "pos": "4º GRUPO C",
+        "team": "Haití"
+      },
+      {
+        "pos": "1º GRUPO D",
+        "team": "Turquía"
+      },
+      {
+        "pos": "2º GRUPO D",
+        "team": "Estados Unidos"
+      },
+      {
+        "pos": "3º GRUPO D",
+        "team": "Paraguay"
+      },
+      {
+        "pos": "4º GRUPO D",
+        "team": "Australia"
+      },
+      {
+        "pos": "1º GRUPO E",
+        "team": "Alemania"
+      },
+      {
+        "pos": "2º GRUPO E",
+        "team": "Costa de Marfil"
+      },
+      {
+        "pos": "3º GRUPO E",
+        "team": "Ecuador"
+      },
+      {
+        "pos": "4º GRUPO E",
+        "team": "Curazao"
+      },
+      {
+        "pos": "1º GRUPO F",
+        "team": "Países Bajos"
+      },
+      {
+        "pos": "2º GRUPO F",
+        "team": "Japón"
+      },
+      {
+        "pos": "3º GRUPO F",
+        "team": "Suecia"
+      },
+      {
+        "pos": "4º GRUPO F",
+        "team": "Túnez"
+      },
+      {
+        "pos": "1º GRUPO G",
+        "team": "Bélgica"
+      },
+      {
+        "pos": "2º GRUPO G",
+        "team": "Egipto"
+      },
+      {
+        "pos": "3º GRUPO G",
+        "team": "Irán"
+      },
+      {
+        "pos": "4º GRUPO G",
+        "team": "Nueva Zelanda"
+      },
+      {
+        "pos": "1º GRUPO H",
+        "team": "España"
+      },
+      {
+        "pos": "2º GRUPO H",
+        "team": "Uruguay"
+      },
+      {
+        "pos": "3º GRUPO H",
+        "team": "Cabo Verde"
+      },
+      {
+        "pos": "4º GRUPO H",
+        "team": "Arabia Saudita"
+      },
+      {
+        "pos": "1º GRUPO I",
+        "team": "Francia"
+      },
+      {
+        "pos": "2º GRUPO I",
+        "team": "Noruega"
+      },
+      {
+        "pos": "3º GRUPO I",
+        "team": "Senegal"
+      },
+      {
+        "pos": "4º GRUPO I",
+        "team": "Irak"
+      },
+      {
+        "pos": "1º GRUPO J",
+        "team": "Argentina"
+      },
+      {
+        "pos": "2º GRUPO J",
+        "team": "Argelia"
+      },
+      {
+        "pos": "3º GRUPO J",
+        "team": "Austria"
+      },
+      {
+        "pos": "4º GRUPO J",
+        "team": "Jordania"
+      },
+      {
+        "pos": "1º GRUPO K",
+        "team": "Portugal"
+      },
+      {
+        "pos": "2º GRUPO K",
+        "team": "Colombia"
+      },
+      {
+        "pos": "3º GRUPO K",
+        "team": "Uzbekistán"
+      },
+      {
+        "pos": "4º GRUPO K",
+        "team": "RD Congo"
+      },
+      {
+        "pos": "1º GRUPO L",
+        "team": "Inglaterra"
+      },
+      {
+        "pos": "2º GRUPO L",
+        "team": "Ghana"
+      },
+      {
+        "pos": "3º GRUPO L",
+        "team": "Panamá"
+      },
+      {
+        "pos": "4º GRUPO L",
+        "team": "Croacia"
+      }
+    ],
+    "clasif_dieciseisavos": [
+      "Corea del Sur",
+      "Marruecos",
+      "Alemania",
+      "Países Bajos",
+      "Costa de Marfil",
+      "Francia",
+      "México",
+      "Inglaterra",
+      "Bélgica",
+      "Turquía",
+      "España",
+      "Colombia",
+      "Suiza",
+      "Estados Unidos",
+      "Argentina",
+      "Portugal",
+      "Canadá",
+      "Japón",
+      "Escocia",
+      "Brasil",
+      "Noruega",
+      "Paraguay",
+      "Cabo Verde",
+      "Ecuador",
+      "República Checa",
+      "Austria",
+      "Argelia",
+      "Ghana",
+      "Irán",
+      "Egipto",
+      "Uruguay",
+      "Panamá"
+    ],
+    "cruces_dieciseisavos": [
+      {
+        "match": "Corea del Sur-Canadá",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Marruecos-Japón",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Alemania-Escocia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Países Bajos-Brasil",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Costa de Marfil-Noruega",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Francia-Paraguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "México-Cabo Verde",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Inglaterra-Ecuador",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Bélgica-República Checa",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Turquía-Austria",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "España-Argelia",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Colombia-Ghana",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Suiza-Irán",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Estados Unidos-Egipto",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Uruguay",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Portugal-Panamá",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      }
+    ],
+    "clasif_octavos": [
+      "Corea del Sur",
+      "Alemania",
+      "Marruecos",
+      "México",
+      "Ghana",
+      "Turquía",
+      "Argentina",
+      "Suiza",
+      "Brasil",
+      "Francia",
+      "Noruega",
+      "Inglaterra",
+      "España",
+      "Bélgica",
+      "Estados Unidos",
+      "Portugal"
+    ],
+    "cruces_octavos": [
+      {
+        "match": "Corea del Sur-Brasil",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Alemania-Francia",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Marruecos-Noruega",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "México-Inglaterra",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Ghana-España",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      },
+      {
+        "match": "Turquía-Bélgica",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Estados Unidos",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Suiza-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      }
+    ],
+    "clasif_cuartos": [
+      "Francia",
+      "España",
+      "Marruecos",
+      "Argentina",
+      "Corea del Sur",
+      "Turquía",
+      "Inglaterra",
+      "Portugal"
+    ],
+    "cruces_cuartos": [
+      {
+        "match": "Francia-Corea del Sur",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "España-Turquía",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Marruecos-Inglaterra",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Argentina-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      }
+    ],
+    "clasif_semis": [
+      "Francia",
+      "Marruecos",
+      "España",
+      "Portugal"
+    ],
+    "cruces_semis": [
+      {
+        "match": "Francia-España",
+        "pred": {
+          "sign": "1",
+          "home": 2,
+          "away": 1
+        }
+      },
+      {
+        "match": "Marruecos-Portugal",
+        "pred": {
+          "sign": "2",
+          "home": 1,
+          "away": 2
+        }
+      }
+    ],
+    "clasif_34": [
+      "España",
+      "Marruecos"
+    ],
+    "finalistas": [
+      "Francia",
+      "Portugal"
+    ],
+    "partido_34": {
+      "match": "España-Marruecos",
+      "pred": {
+        "sign": "1",
+        "home": 2,
+        "away": 1
+      }
+    },
+    "partido_final": {
+      "match": "Francia-Portugal",
+      "pred": {
+        "sign": "2",
+        "home": 1,
+        "away": 2
+      }
+    },
+    "campeon": "Portugal",
+    "subcampeon": "Francia",
+    "tercero": "España",
+    "bota_oro": "Mbappe",
+    "bota_plata": "Olise",
+    "bota_bronce": "Cristiano",
+    "balon_oro": "Vitinha",
+    "balon_plata": "Mbappe",
+    "balon_bronce": "Olise"
+  }
+}

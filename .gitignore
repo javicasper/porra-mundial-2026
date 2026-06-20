@@ -1,0 +1,19 @@
+# Secretos
+.env
+
+# Datos reales de la porra (privados / personales). El repo incluye un ejemplo anonimizado.
+data/predicciones.json
+data/resultados.json
+
+# Artefactos generados
+web/data.json
+web/preview*.html
+web/verify.html
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Sistema
+.DS_Store

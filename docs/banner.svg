@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">La Porra del Mundial</title>
+  <desc id="desc">Banner editorial para README del repositorio La Porra del Mundial.</desc>
+
+  <defs>
+    <style>
+      :root {
+        --paper: #f7f6f1;
+        --ink: #1f2a24;
+        --muted: #46534c;
+        --green: #1d6b4c;
+        --gold: #bd9a2a;
+      }
+
+      .title {
+        font-family: Georgia, "Times New Roman", Times, serif;
+        font-size: 88px;
+        font-weight: 700;
+        fill: var(--ink);
+        letter-spacing: 0.2px;
+      }
+
+      .subtitle {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        font-size: 34px;
+        font-weight: 500;
+        fill: var(--muted);
+        letter-spacing: 0.2px;
+      }
+
+      .line { stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    </style>
+
+    <linearGradient id="goldFade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#bd9a2a" stop-opacity="0"/>
+      <stop offset="30%" stop-color="#bd9a2a" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#bd9a2a" stop-opacity="0"/>
+    </linearGradient>
+
+    <radialGradient id="ballShade" cx="40%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f2efe7"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="#f7f6f1"/>
+
+  <!-- Framing lines -->
+  <line x1="92" y1="90" x2="1188" y2="90" class="line" stroke="url(#goldFade)" stroke-width="2.2"/>
+  <line x1="92" y1="550" x2="1188" y2="550" class="line" stroke="#1d6b4c" stroke-opacity="0.18" stroke-width="2"/>
+
+  <!-- Minimal pitch arcs -->
+  <path d="M 60 640 Q 170 520 300 500" class="line" stroke="#1d6b4c" stroke-opacity="0.13" stroke-width="2.4"/>
+  <path d="M 1220 0 Q 1110 120 980 140" class="line" stroke="#1d6b4c" stroke-opacity="0.13" stroke-width="2.4"/>
+
+  <!-- Trophy-inspired minimalist shape -->
+  <g transform="translate(1015 345)">
+    <path d="M 0 -64 C -26 -64 -44 -44 -44 -22 C -44 2 -28 17 -7 19 C -6 6 -4 -6 0 -16" class="line" stroke="#1d6b4c" stroke-opacity="0.55" stroke-width="3"/>
+    <path d="M 0 -64 C 26 -64 44 -44 44 -22 C 44 2 28 17 7 19 C 6 6 4 -6 0 -16" class="line" stroke="#1d6b4c" stroke-opacity="0.55" stroke-width="3"/>
+    <path d="M -16 14 Q 0 26 16 14" class="line" stroke="#bd9a2a" stroke-opacity="0.9" stroke-width="3"/>
+    <line x1="0" y1="-16" x2="0" y2="46" class="line" stroke="#1d6b4c" stroke-opacity="0.55" stroke-width="3"/>
+    <line x1="-24" y1="46" x2="24" y2="46" class="line" stroke="#bd9a2a" stroke-opacity="0.9" stroke-width="3"/>
+  </g>
+
+  <!-- Minimal soccer ball -->
+  <g transform="translate(153 420)">
+    <circle cx="0" cy="0" r="64" fill="url(#ballShade)" stroke="#1d6b4c" stroke-opacity="0.28" stroke-width="2.2"/>
+    <polygon points="0,-18 17,-5 10,16 -10,16 -17,-5" fill="none" stroke="#1d6b4c" stroke-opacity="0.58" stroke-width="1.8"/>
+    <path d="M 0 -18 L 0 -46 M 17 -5 L 41 -16 M 10 16 L 24 39 M -10 16 L -24 39 M -17 -5 L -41 -16" class="line" stroke="#1d6b4c" stroke-opacity="0.4" stroke-width="1.6"/>
+    <circle cx="0" cy="0" r="53" class="line" stroke="#bd9a2a" stroke-opacity="0.22" stroke-width="1.4"/>
+  </g>
+
+  <!-- Main copy -->
+  <text x="236" y="318" class="title">La Porra del Mundial</text>
+  <text x="240" y="372" class="subtitle">Quiniela del Mundial 2026 · marcador en vivo</text>
+
+  <!-- Accent marker -->
+  <line x1="240" y1="394" x2="640" y2="394" class="line" stroke="#1d6b4c" stroke-width="4" stroke-opacity="0.82"/>
+  <line x1="648" y1="394" x2="750" y2="394" class="line" stroke="#bd9a2a" stroke-width="4" stroke-opacity="0.95"/>
+</svg>

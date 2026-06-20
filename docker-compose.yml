@@ -1,0 +1,31 @@
+services:
+  porra-web:
+    image: nginx:alpine
+    container_name: porra-web
+    restart: unless-stopped
+    networks: [proxy]
+    expose:
+      - "3000"
+    volumes:
+      - ./web:/usr/share/nginx/html:ro
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  # Regenera web/data.json desde la API cada 5 min (solo stdlib de Python).
+  porra-refresh:
+    image: python:3.12-alpine
+    container_name: porra-refresh
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      FOOTBALLDATA_API_KEY: ${FOOTBALLDATA_API_KEY:?define FOOTBALLDATA_API_KEY en .env}
+    volumes:
+      - .:/app
+    command: >
+      sh -c "while true; do
+               python web/build_web_data.py && echo \"[$(date -u +%H:%M:%S)] data.json actualizado\" || echo 'fallo refresco';
+               sleep 60;
+             done"
+
+networks:
+  proxy:
+    external: true

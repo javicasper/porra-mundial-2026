@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Porra del Mundial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">⚽ Copa Mundial FIFA 2026</div>
+    <h1>La Porra del Mundial</h1>
+    <div class="sub" id="meta"></div>
+  </div>
+  <nav class="switch">
+    <a href="index.html" class="on">Clasificación</a>
+    <a href="mundial.html">Resultados</a>
+  </nav>
+
+  <div id="view"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+function badge(x){
+  if(!x.real) return `<div class="bdg bx">—</div>`;
+  const c = x.tier==="exacto"?"b5":x.tier==="diferencia"?"b2":x.tier==="signo"?"b1":"b0";
+  return `<div class="bdg ${c}">${x.pts?"+"+x.pts:"0"}</div>`;
+}
+function tieBox(t){
+  const row=(team,sc,w)=>`<div class="bx-row ${w?'w':''}"><span class="fl">${fl(team)}</span><span class="bx-nm">${team||"—"}</span><span class="bx-sc">${sc!=null?sc:""}</span></div>`;
+  return `<div class="bx-tie">${row(t.a,t.sa,t.wa)}${row(t.b,t.sb,t.wb)}</div>`;
+}
+function normTie(c, adv){
+  if(!c || !c.match) return {a:"",b:"",sa:null,sb:null,wa:false,wb:false};
+  const [a,b] = c.match.split("-").map(s=>s.trim());
+  const p = c.pred||{};
+  return {a,b,sa:p.home,sb:p.away,wa:adv.has(a),wb:adv.has(b)};
+}
+const EMPTY_TIE={a:"",b:"",sa:null,sb:null,wa:false,wb:false};
+function bracketHTML(P){
+  const S=a=>new Set((a||[]).filter(Boolean));
+  // niveles SF, QF, R16, R32 con el conjunto de quién avanza de cada cruce
+  const defs=[
+    [P.cruces_semis, S(P.finalistas)],
+    [P.cruces_cuartos, S(P.clasif_semis)],
+    [P.cruces_octavos, S(P.clasif_cuartos)],
+    [P.cruces_dieciseisavos, S(P.clasif_octavos)],
+  ];
+  const levels=defs.map(([cruces,adv])=>{
+    const ties=(cruces||[]).map(c=>{ const t=normTie(c,adv); t.win=t.wa?t.a:(t.wb?t.b:null); return t; });
+    const map={}; ties.forEach(t=>{ if(t.win) map[t.win]=t; });
+    return {ties,map};
+  });
+  if(!levels[0].ties.length) return '<div style="color:var(--mut);padding:8px 2px">Aún sin cuadro.</div>';
+  // un cruce se cuelga de los cruces de la ronda siguiente cuyos ganadores son sus equipos
+  function node(tie, lvl){
+    const next=levels[lvl];
+    let k=null;
+    if(next && next.ties.length){
+      const ca=next.map[tie.a], cb=next.map[tie.b];
+      if(ca||cb) k=[ ca?node(ca,lvl+1):{t:EMPTY_TIE,k:null}, cb?node(cb,lvl+1):{t:EMPTY_TIE,k:null} ];
+    }
+    return {t:tie, k};
+  }
+  const rn=(n,side)=>`<div class="bnode ${side}"><div class="bself">${tieBox(n.t)}</div>${n.k?`<div class="bkids">${n.k.map(k=>rn(k,side)).join("")}</div>`:""}</div>`;
+  const fin=normTie(P.partido_final,S([P.campeon]));
+  // los dos semifinalistas-cruce que dan los finalistas
+  const lf=levels[0].map[fin.a]||levels[0].ties[0];
+  const rf=levels[0].map[fin.b]||levels[0].ties[1];
+  return `<div class="bkwrap"><div class="bktree">
+    ${rn(node(lf,1),'left')}
+    <div class="bkfinal"><div class="bkfl">Final</div>${tieBox(fin)}<div class="bkch">🏆 ${fl(P.campeon)} ${P.campeon||"—"}</div></div>
+    ${rf?rn(node(rf,1),'right'):""}
+  </div></div>`;
+}
+function prRow(g){
+  const sc = g.pred ? `${g.pred.home}-${g.pred.away}` : "—";
+  const right = g.real
+    ? `<div class="rl">real <b>${g.real.home}-${g.real.away}</b></div>${badge(g)}`
+    : `<div class="rl pend">por jugar</div><div class="bdg bx"></div>`;
+  return `<div class="pr"><div class="mm"><span class="fl">${fl(g.local)}</span><span class="sc">${sc}</span><span class="fl">${fl(g.visitante)}</span></div>${right}</div>`;
+}
+function detalle(P, d){
+  const jug = P.grupos.filter(g=>g.real);
+  const pts = jug.reduce((a,g)=>a+g.pts,0);
+  const picks = `<div class="picks">
+    <span class="pk">Campeón <b>${fl(P.campeon)} ${P.campeon||"—"}</b></span>
+    <span class="pk">Subcampeón <b>${fl(P.subcampeon)} ${P.subcampeon||"—"}</b></span>
+    <span class="pk">3.º <b>${fl(P.tercero)} ${P.tercero||"—"}</b></span>
+    <span class="pk">🥇 Bota <b>${P.bota_oro||"—"}</b></span>
+    <span class="pk">🏅 Balón <b>${P.balon_oro||"—"}</b></span></div>`;
+  // hora de inicio de cada partido (para ordenar cronológicamente)
+  const nm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+  const kp=(a,b)=>[nm(a),nm(b)].sort().join("|");
+  const utc={};
+  (d.partidos||[]).forEach(p=>{ if(p.grupo&&p.local&&p.visitante) utc[kp(p.local,p.visitante)]=p.utc||""; });
+  const jor={"1":[],"2":[],"3":[]};
+  P.grupos.forEach(g=>{ const j=(g.code||"").slice(-1); if(jor[j]) jor[j].push(g); });
+  Object.values(jor).forEach(arr=>arr.sort((x,y)=>
+    (utc[kp(x.local,x.visitante)]||"").localeCompare(utc[kp(y.local,y.visitante)]||"")));
+  const grp=["1","2","3"].map(j=>`<div class="jlabel">Jornada ${j}</div>${jor[j].map(prRow).join("")}`).join("");
+  return `${picks}
+    <div class="sec" style="margin:18px 2px 8px">Su cuadro de eliminatorias <span class="hint">desliza →</span></div>
+    ${bracketHTML(P)}
+    <div class="sec" style="margin:20px 2px 6px">Sus pronósticos de grupos
+      <span class="hint">${jug.length}/72 jugados · +${pts} pts</span></div>
+    ${grp}`;
+}
+function wc(p,s){ if(!p.jugado||p.golesLocal===p.golesVisitante) return ""; const hw=p.golesLocal>p.golesVisitante; return (s==="h"?hw:!hw)?"win":""; }
+function box(p){
+  if(p.envivo) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="lv">● ${liveMinute(p)}</div></div>`;
+  if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">FINAL</div></div>`;
+  return `<div class="bx2"><div class="t">${hora(p.utc)}</div></div>`;
+}
+function liveBanner(d){
+  const live = d.partidos.filter(p=>p.envivo).sort((a,b)=>(a.utc||"")<(b.utc||"")?-1:1);
+  if(!live.length) return "";
+  const rows = live.map(p=>{
+    const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : p.fase;
+    return `<div class="mt">
+      <div class="th ${wc(p,'h')}">${p.local||"Por definir"}<span class="fl">${fl(p.local)}</span></div>
+      ${box(p)}
+      <div class="ta ${wc(p,'a')}"><span class="fl">${fl(p.visitante)}</span>${p.visitante||"Por definir"}</div>
+      <div class="tag"><span>${tag}</span></div></div>`;
+  }).join("");
+  return `<div class="sec live-sec"><span class="dot"></span>En directo</div>
+    <a href="mundial.html" class="livelink"><div class="card livecard">${rows}</div></a>`;
+}
+
+const COL=["#e6194B","#3cb44b","#4363d8","#f58231","#911eb4","#1ca9c9","#f032e6","#9A6324","#469990","#bf6f00","#800000","#000075","#a0a000"];
+function evolucion(d){
+  const T=d.timeline; if(!T||!T.x||T.x.length<2) return "";
+  const ids=d.ranking.map(r=>r.id);
+  const maxY=Math.max(1,...ids.flatMap(id=>T.series[id]||[]));
+  const W=360,H=190,PL=20,PR=8,PT=10,PB=20,n=T.x.length;
+  const X=i=>PL+i*(W-PL-PR)/(n-1), Y=v=>PT+(1-v/maxY)*(H-PT-PB);
+  const ticks=[0,Math.round(maxY/2),maxY];
+  const grid=ticks.map(t=>`<line class="grid" x1="${PL}" y1="${Y(t).toFixed(1)}" x2="${W-PR}" y2="${Y(t).toFixed(1)}"/><text class="ytx" x="${PL-3}" y="${(Y(t)+2.5).toFixed(1)}">${t}</text>`).join("");
+  const step=Math.max(1,Math.ceil(n/6));
+  const xlab=T.x.map((l,i)=>(i&&(i%step===0||i===n-1))?`<text class="xtx" x="${X(i).toFixed(1)}" y="${H-6}">${l}</text>`:"").join("");
+  const lines=ids.map((id,k)=>{const s=T.series[id]||[];
+    return `<polyline class="ln" data-id="${id}" stroke="${COL[k%COL.length]}" points="${s.map((v,i)=>`${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ")}"/>`;}).join("");
+  const legend=ids.map((id,k)=>{const r=d.ranking.find(x=>x.id===id);
+    return `<span class="lg" data-id="${id}"><i style="background:${COL[k%COL.length]}"></i>${r.nombre}</span>`;}).join("");
+  return `<div class="sec" style="margin-top:28px">Evolución de la porra <span class="hint">puntos por partido</span></div>
+    <div class="chartwrap"><svg viewBox="0 0 ${W} ${H}" class="chart">${grid}${xlab}${lines}</svg></div>
+    <div class="legend">${legend}</div>`;
+}
+
+function render(d){
+  const html = d.ranking.map(p=>{
+    const m = p.pos===1?"🥇":p.pos===2?"🥈":p.pos===3?"🥉":p.pos;
+    return `<div class="lr ${p.pos===1?'l1':''}" data-id="${p.id}">
+        <div class="rk">${m}</div>
+        <div class="who"><div class="n"><span class="fl">${fl(p.campeon)}</span>${p.nombre}</div>
+          <div class="meta2">${p.clavados} clavados · ${p.diferencias} dif · ${p.signos} signos</div></div>
+        <div class="pt"><div class="n">${p.puntos}</div><div class="u">pts</div></div>
+        <div class="chev">▸</div>
+      </div>
+      <div class="pdet" data-id="${p.id}"></div>`;
+  }).join("");
+  $("#view").innerHTML = liveBanner(d) + `<div class="board">${html}</div>` + evolucion(d);
+  document.querySelectorAll(".lr").forEach(r=>r.addEventListener("click",()=>{
+    r.classList.toggle("open");
+    const pd=r.nextElementSibling;
+    if(r.classList.contains("open") && pd && !pd.dataset.built){
+      pd.innerHTML=detalle(d.participantes[r.dataset.id], d); pd.dataset.built="1";
+    }
+  }));
+  document.querySelectorAll(".lg").forEach(l=>l.addEventListener("click",()=>{
+    const chart=document.querySelector(".chart"), on=l.classList.contains("on");
+    document.querySelectorAll(".lg").forEach(x=>x.classList.remove("on"));
+    document.querySelectorAll(".chart .ln").forEach(x=>x.classList.remove("on"));
+    if(on){ chart.classList.remove("sel"); }
+    else{ chart.classList.add("sel"); l.classList.add("on");
+      const ln=document.querySelector(`.chart .ln[data-id="${l.dataset.id}"]`); if(ln) ln.classList.add("on"); }
+  }));
+}
+iniciar(render);
+</script>
+</body>
+</html>

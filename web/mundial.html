@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Mundial · Resultados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="eyebrow">⚽ Copa Mundial FIFA 2026</div>
+    <h1>La Porra del Mundial</h1>
+    <div class="sub" id="meta"></div>
+  </div>
+  <nav class="switch">
+    <a href="index.html">Clasificación</a>
+    <a href="mundial.html" class="on">Resultados</a>
+  </nav>
+
+  <div id="view"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+const RONDAS = ["Dieciseisavos","Octavos","Cuartos","Semifinales","3er puesto","Final"];
+let CALF = "proximos";
+
+/* --- tablas de grupos --- */
+function grupos(d){
+  const G = d.tablas_grupos;
+  const cards = Object.keys(G).map(g=>{
+    const filas = G[g].map(r=>{
+      const cls = r.pos<=2 ? "q" : (r.pos===3 ? "q3" : "");
+      return `<tr class="${cls}">
+        <td class="tm"><span class="pos">${r.pos}</span><span class="fl">${fl(r.team)}</span><span class="nm">${r.team}</span></td>
+        <td>${r.pj}</td><td>${r.g}</td><td>${r.e}</td><td>${r.p}</td>
+        <td class="wide">${r.gf}</td><td class="wide">${r.gc}</td>
+        <td>${r.dg>0?"+"+r.dg:r.dg}</td><td class="pts">${r.pts}</td>
+        <td class="wide form">${(r.form||[]).map(f=>`<span class="fdot f${f}"></span>`).join("")}</td></tr>`;
+    }).join("");
+    return `<div class="gt"><div class="gh">Grupo ${g}</div>
+      <table>
+        <thead><tr><th class="l">Selección</th><th>PJ</th><th>G</th><th>E</th><th>P</th>
+          <th class="wide">GF</th><th class="wide">GC</th><th>DG</th><th>Pts</th><th class="wide">Forma</th></tr></thead>
+        <tbody>${filas}</tbody></table></div>`;
+  }).join("");
+  return `<div class="sec">Fase de grupos</div>
+    <div class="glegend">
+      <span class="d"><span class="sw" style="background:var(--accent)"></span>Clasifican (1.º y 2.º)</span>
+      <span class="d"><span class="sw" style="background:var(--lead)"></span>3.º · repesca (mejores terceros)</span></div>
+    <div class="ggrid">${cards}</div>`;
+}
+
+/* --- cuadro de cruces --- */
+function cruces(d){
+  const byR = {}; RONDAS.forEach(r=>byR[r]=[]);
+  d.partidos.forEach(p=>{ if(byR[p.fase]) byR[p.fase].push(p); });
+  const lado = (t,g,win)=>`<div class="s ${win?'w':''}"><span class="fl">${fl(t)}</span>${t||"Por definir"}${g!=null?`<span class="g">${g}</span>`:""}</div>`;
+  const cols = RONDAS.filter(r=>byR[r].length).map(r=>{
+    const ties = byR[r].sort((a,b)=>(a.utc||"")> (b.utc||"")?1:-1).map(p=>{
+      const hw = p.jugado && p.golesLocal>p.golesVisitante, aw = p.jugado && p.golesVisitante>p.golesLocal;
+      return `<div class="tie">
+        ${lado(p.local,p.jugado?p.golesLocal:null,hw)}
+        <div class="vs">${p.jugado?"":hora(p.utc)}</div>
+        ${lado(p.visitante,p.jugado?p.golesVisitante:null,aw)}</div>`;
+    }).join("");
+    return `<div class="brd-round"><h4>${r}</h4>${ties}</div>`;
+  }).join("");
+  return `<div class="sec">Cuadro de cruces</div>
+    <div class="bracket">${cols||'<div style="color:var(--mut)">Aún por definir.</div>'}</div>`;
+}
+
+/* --- resultados / calendario --- */
+function wc(p,s){ if(!p.jugado||p.golesLocal===p.golesVisitante) return ""; const hw=p.golesLocal>p.golesVisitante; return (s==="h"?hw:!hw)?"win":""; }
+function box(p){
+  if(p.status==="IN_PLAY"||p.status==="PAUSED") return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="lv">● ${liveMinute(p)}</div></div>`;
+  if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">FINAL</div></div>`;
+  return `<div class="bx2"><div class="t">${hora(p.utc)}</div></div>`;
+}
+function matchRow(p){
+  const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : p.fase;
+  return `<div class="mt">
+    <div class="th ${wc(p,'h')}">${p.local||"Por definir"}<span class="fl">${fl(p.local)}</span></div>
+    ${box(p)}
+    <div class="ta ${wc(p,'a')}"><span class="fl">${fl(p.visitante)}</span>${p.visitante||"Por definir"}</div>
+    <div class="tag"><span>${tag}</span></div></div>`;
+}
+
+function liveSection(d){
+  const live = d.partidos.filter(p=>p.envivo).sort((a,b)=>(a.utc||"")<(b.utc||"")?-1:1);
+  if(!live.length) return "";
+  return `<div class="sec live-sec"><span class="dot"></span>En directo</div>
+    <div class="card livecard">${live.map(matchRow).join("")}</div>`;
+}
+
+function resultados(d){
+  let ps = d.partidos.slice();
+  if(CALF==="jugados") ps=ps.filter(p=>p.jugado);
+  else if(CALF==="proximos") ps=ps.filter(p=>!p.jugado && !p.envivo);
+  const desc = CALF==="jugados";          // jugados: más recientes primero
+  const g={}; ps.forEach(p=>(g[diaKey(p.utc)]=g[diaKey(p.utc)]||[]).push(p));
+  let keys=Object.keys(g).sort(); if(desc) keys.reverse();
+  const body=keys.map(k=>{
+    const arr=g[k].sort((a,b)=>{const r=(a.utc||"")<(b.utc||"")?-1:1; return desc?-r:r;});
+    return `<div><div class="day">${diaLbl(arr[0].utc)}</div>${arr.map(matchRow).join("")}</div>`;
+  }).join("");
+  const f=x=>`<div class="fbtn ${CALF===x?'on':''}" data-f="${x}">${{jugados:"Jugados",proximos:"Próximos",todos:"Todos"}[x]}</div>`;
+  return `<div class="sec">Resultados y calendario</div>
+    <div class="fbar">${f("proximos")}${f("jugados")}${f("todos")}</div>
+    ${body||'<div style="padding:14px 2px;color:var(--mut)">Sin partidos.</div>'}`;
+}
+
+function goleadores(d){
+  const g = d.goleadores || [];
+  if(!g.length) return "";
+  const rows = g.map(s=>`<div class="srow ${s.pos===1?'sgold':''}">
+    <div class="srk">${s.pos}</div>
+    <div class="sn"><div class="nm2"><span class="fl">${fl(s.equipo)}</span><span>${s.jugador}</span></div>
+      <div class="tm2">${s.equipo}${s.asistencias?` · ${s.asistencias} asist.`:""}${s.penaltis?` · ${s.penaltis} pen.`:""}</div></div>
+    <div class="sg">${s.goles}</div></div>`).join("");
+  return `<div class="sec">Goleadores <span class="hint">Bota de Oro</span></div>
+    <div class="card"><div class="shead"><div></div><div>Jugador</div><div class="r">Goles</div></div>${rows}</div>`;
+}
+
+function render(d){
+  $("#view").innerHTML = liveSection(d) + resultados(d) + grupos(d) + goleadores(d) + cruces(d);
+  document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{
+    CALF=b.dataset.f; render(d);
+  }));
+}
+iniciar(render);
+</script>
+</body>
+</html>

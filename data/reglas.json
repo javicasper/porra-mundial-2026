@@ -1,0 +1,27 @@
+{
+  "_descripcion": "Sistema de puntos de la Porra del Mundial 2026.",
+  "_modo_partido": "El RESULTADO EXACTO acumula los puntos de 'diferencia' (exacto = diferencia + exacto). El 'signo' no acumula. Por partido: signo=tabla.signo; diferencia=tabla.diferencia; exacto=tabla.diferencia+tabla.exacto.",
+  "partidos": {
+    "grupos":        { "signo": 1, "diferencia": 2, "exacto": 3 },
+    "r32":           { "signo": 1, "diferencia": 2, "exacto": 3 },
+    "r16":           { "signo": 2, "diferencia": 3, "exacto": 4 },
+    "qf":            { "signo": 2, "diferencia": 3, "exacto": 4 },
+    "sf":            { "signo": 2, "diferencia": 2, "exacto": 5 },
+    "tercer_puesto": { "signo": 3, "diferencia": 4, "exacto": 5 },
+    "final":         { "signo": 3, "diferencia": 4, "exacto": 6 }
+  },
+  "posicion_grupo": { "1": 4, "2": 3, "3": 2, "4": 2 },
+  "clasificados": {
+    "dieciseisavos": 1,
+    "octavos": 2,
+    "cuartos": 3,
+    "semis": 5,
+    "tercer_cuarto_puesto": 5,
+    "final": 7
+  },
+  "cuadro_honor": { "campeon": 10, "subcampeon": 6, "tercero": 4 },
+  "especiales": {
+    "bota_oro": 4, "bota_plata": 2, "bota_bronce": 1,
+    "balon_oro": 4, "balon_plata": 2, "balon_bronce": 1
+  }
+}
