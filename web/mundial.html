@@ -95,7 +95,7 @@ function liveSection(d){
   const live = d.partidos.filter(p=>p.envivo).sort((a,b)=>(a.utc||"")<(b.utc||"")?-1:1);
   if(!live.length) return "";
   return `<div class="sec live-sec"><span class="dot"></span>En directo</div>
-    <div class="card livecard">${live.map(p=>matchRow(p)+evlistHTML(p.eventos)).join("")}</div>`;
+    <div class="card livecard">${live.map(p=>matchRow(p)+evlistHTML(p)).join("")}</div>`;
 }
 
 function resultados(d){

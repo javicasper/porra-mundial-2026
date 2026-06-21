@@ -109,32 +109,84 @@ async function _espnLive() {
         else return null;
         return { kind, clock: (x.clock || {}).displayValue || "", side: ((x.team || {}).id === hid) ? "h" : "a", who };
       }).filter(Boolean);
-      out[(e.date || "").slice(0, 16)] = { state: e.status.type.state, clock: e.status.displayClock, gl: h && h.score, gv: a && a.score, events };
+      const stf = (team, name) => {
+        const x = (team.statistics || []).find(z => z.name === name);
+        if (!x) return null;
+        const v = parseFloat(x.displayValue);
+        return isNaN(v) ? x.displayValue : Math.round(v);
+      };
+      const stats = {
+        posesion: [stf(h, "possessionPct"), stf(a, "possessionPct")],
+        tiros: [stf(h, "totalShots"), stf(a, "totalShots")],
+        aPuerta: [stf(h, "shotsOnTarget"), stf(a, "shotsOnTarget")],
+        corners: [stf(h, "wonCorners"), stf(a, "wonCorners")],
+        faltas: [stf(h, "foulsCommitted"), stf(a, "foulsCommitted")],
+      };
+      const hayStats = Object.values(stats).some(p => p.some(v => v != null));
+      out[(e.date || "").slice(0, 16)] = { state: e.status.type.state, clock: e.status.displayClock, gl: h && h.score, gv: a && a.score, events, stats: hayStats ? stats : null };
     }
     return out;
   } catch (e) { return {}; }
 }
-function _evRows(events) {
+
+// ---- Panel del partido en vivo: eventos (colapsable) + estadísticas ----
+const _panelOpen = {};   // key utc -> ¿eventos expandidos?
+const _STAT_LBL = { posesion: "Posesión", tiros: "Tiros", aPuerta: "Tiros a puerta", corners: "Córners", faltas: "Faltas" };
+
+function _evRows(events, limit) {
   if (!events || !events.length) return "";
   const mark = ev => ev.kind === "yellow" ? '<span class="evcard yel"></span>'
     : ev.kind === "red" ? '<span class="evcard red"></span>' : _EVBALL;
   const sfx = ev => ev.kind === "pen" ? " (pen.)" : ev.kind === "og" ? " (p.p.)" : "";
-  return events.slice().reverse().map(ev =>   // más recientes arriba
+  let list = events.slice().reverse();           // más recientes arriba
+  if (limit) list = list.slice(0, limit);
+  return list.map(ev =>
     `<div class="evrow ${ev.side}"><span class="evmin">${ev.clock}</span>${mark(ev)}<span class="evwho">${ev.who}${sfx(ev)}</span></div>`
   ).join("");
 }
-// Timeline ya renderizada desde el servidor (data.json) → no desaparece al refrescar.
-function evlistHTML(eventos) {
-  const r = _evRows(eventos);
-  return r ? `<div class="evlist">${r}</div>` : "";
+function _statsHTML(stats) {
+  if (!stats) return "";
+  const num = v => v == null ? "–" : v;
+  const pos = stats.posesion || [null, null];
+  let h = "";
+  if (pos[0] != null || pos[1] != null) {
+    const ph = +pos[0] || 0, pa = +pos[1] || 0, tot = (ph + pa) || 1;
+    h += `<div class="statposs"><span>${num(pos[0])}%</span><b>Posesión</b><span>${num(pos[1])}%</span></div>
+      <div class="possbar"><i style="width:${Math.round(100 * ph / tot)}%"></i></div>`;
+  }
+  for (const k of ["tiros", "aPuerta", "corners", "faltas"]) {
+    const v = stats[k]; if (!v || (v[0] == null && v[1] == null)) continue;
+    h += `<div class="statrow"><span class="sh">${num(v[0])}</span><span class="sl">${_STAT_LBL[k]}</span><span class="sa">${num(v[1])}</span></div>`;
+  }
+  return h ? `<div class="statbox">${h}</div>` : "";
 }
+// Contenido del panel (eventos colapsables + stats). Lo usan servidor-render y cliente.
+function livePanelInner(key, eventos, stats) {
+  const evs = eventos || [];
+  let ev = "";
+  if (evs.length) {
+    const open = !!_panelOpen[key];
+    ev = `<div class="evlist">${_evRows(evs, open ? 0 : 3)}</div>`;
+    if (evs.length > 3) ev += `<button class="evmore" data-key="${key}">${open ? "Ocultar" : "Ver " + (evs.length - 3) + " más"}</button>`;
+  }
+  return ev + _statsHTML(stats);
+}
+function livePanel(key, eventos, stats) {
+  const inner = livePanelInner(key, eventos, stats);
+  return inner ? `<div class="livepanel" data-key="${key}">${inner}</div>` : "";
+}
+// compat: el render de las páginas llama a esto por cada partido en vivo
+function evlistHTML(p) {
+  return livePanel((p.utc || "").slice(0, 16), p.eventos, p.stats);
+}
+
 async function _pollLive() {
   const boxes = document.querySelectorAll(".bx2[data-live]");
   if (!boxes.length) return;
   const esp = await _espnLive();
   let cambio = false;
   boxes.forEach(el => {
-    const e = esp[el.dataset.live]; if (!e) return;
+    const key = el.dataset.live, e = esp[key]; if (!e) return;
     const s = el.querySelector(".s"), lv = el.querySelector(".lv");
     if (e.state === "in") {
       if (s && e.gl != null) { const nuevo = `${e.gl}-${e.gv}`; if (s.textContent !== nuevo) cambio = true; s.textContent = nuevo; }
@@ -142,20 +194,29 @@ async function _pollLive() {
     } else if (e.state === "post") {
       if (lv) lv.textContent = "● FINAL"; cambio = true;
     }
-    // timeline de eventos (goles/tarjetas) bajo el partido en directo
     const mt = el.closest(".mt");
     if (mt) {
-      const rows = _evRows(e.events);
+      const inner = livePanelInner(key, e.events, e.stats);
       let panel = mt.nextElementSibling;
-      const isPanel = panel && panel.classList && panel.classList.contains("evlist");
-      if (rows) {
-        if (!isPanel) { panel = document.createElement("div"); panel.className = "evlist"; mt.parentNode.insertBefore(panel, mt.nextSibling); }
-        if (panel.innerHTML !== rows) panel.innerHTML = rows;
+      const isPanel = panel && panel.classList && panel.classList.contains("livepanel");
+      if (inner) {
+        if (!isPanel) { panel = document.createElement("div"); panel.className = "livepanel"; panel.dataset.key = key; mt.parentNode.insertBefore(panel, mt.nextSibling); }
+        if (panel.innerHTML !== inner) panel.innerHTML = inner;
       } else if (isPanel) { panel.remove(); }
     }
   });
   if (cambio) _refresh();   // un gol o el final: que el resto (ranking) se ponga al día ya
 }
+// Botón "Ver más / Ocultar" (delegado, sobrevive a re-render)
+document.addEventListener("click", ev => {
+  const b = ev.target.closest(".evmore"); if (!b) return;
+  ev.preventDefault();
+  const key = b.dataset.key;
+  _panelOpen[key] = !_panelOpen[key];
+  const panel = document.querySelector(`.livepanel[data-key="${key}"]`);
+  const p = _data && (_data.partidos || []).find(x => (x.utc || "").slice(0, 16) === key);
+  if (panel && p) panel.innerHTML = livePanelInner(key, p.eventos, p.stats);
+});
 function liveEngine() {
   _pollLive();
   setInterval(_pollLive, 10000);

@@ -84,6 +84,7 @@ def build_partidos(matches):
             "envivo": live,
             "minuto": None,
             "eventos": None,
+            "stats": None,
         })
     out.sort(key=lambda x: (x["utc"] or "9999"))
     return out
@@ -123,10 +124,26 @@ def fetch_espn():
                 eventos.append({"kind": kind, "clock": (x.get("clock") or {}).get("displayValue", ""),
                                 "side": "h" if (x.get("team") or {}).get("id") == hid else "a",
                                 "who": quien[0] if quien else ""})
+
+            def st(team, name):
+                for s in team.get("statistics", []):
+                    if s.get("name") == name:
+                        v = s.get("displayValue")
+                        try:
+                            return round(float(v))
+                        except (TypeError, ValueError):
+                            return v
+                return None
+            STATS = [("posesion", "possessionPct"), ("tiros", "totalShots"),
+                     ("aPuerta", "shotsOnTarget"), ("corners", "wonCorners"), ("faltas", "foulsCommitted")]
+            stats = {k: [st(h, n), st(a, n)] for k, n in STATS}
+            if all(v is None for pair in stats.values() for v in pair):
+                stats = None
+
             out.append({"key": (e.get("date") or "")[:16],
                         "state": e["status"]["type"]["state"],          # pre | in | post
                         "clock": e["status"].get("displayClock"),
-                        "home": sc(h), "away": sc(a), "eventos": eventos})
+                        "home": sc(h), "away": sc(a), "eventos": eventos, "stats": stats})
         except Exception:
             continue
     return out
@@ -146,11 +163,13 @@ def overlay_espn(partidos, espn):
             if e["away"] is not None: p["golesVisitante"] = e["away"]
             p["minuto"] = e["clock"]
             p["eventos"] = e.get("eventos") or None
+            p["stats"] = e.get("stats")
         elif e["state"] == "post":
             p["envivo"], p["jugado"], p["status"], p["minuto"] = False, True, "FINISHED", None
             if e["home"] is not None: p["golesLocal"] = e["home"]
             if e["away"] is not None: p["golesVisitante"] = e["away"]
             p["eventos"] = e.get("eventos") or None
+            p["stats"] = e.get("stats")
     return partidos
 
 
