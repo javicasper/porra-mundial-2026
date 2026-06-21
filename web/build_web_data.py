@@ -83,6 +83,7 @@ def build_partidos(matches):
             "jugado": fin,
             "envivo": live,
             "minuto": None,
+            "eventos": None,
         })
     out.sort(key=lambda x: (x["utc"] or "9999"))
     return out
@@ -101,15 +102,31 @@ def fetch_espn():
     out = []
     for e in d.get("events", []):
         try:
-            st = e["status"]
-            cs = e["competitions"][0]["competitors"]
+            comp = e["competitions"][0]
+            cs = comp["competitors"]
             h = next(x for x in cs if x["homeAway"] == "home")
             a = next(x for x in cs if x["homeAway"] == "away")
+            hid = (h.get("team") or {}).get("id")
             sc = lambda x: int(x["score"]) if str(x.get("score", "")).strip() != "" else None
+            eventos = []
+            for x in comp.get("details", []):
+                t = (x.get("type") or {}).get("text", "")
+                quien = [z.get("displayName") for z in (x.get("athletesInvolved") or []) if z.get("displayName")]
+                if x.get("scoringPlay") or "Goal" in t:
+                    kind = "og" if x.get("ownGoal") else ("pen" if x.get("penaltyKick") else "goal")
+                elif x.get("redCard") or "Red" in t:
+                    kind = "red"
+                elif x.get("yellowCard") or "Yellow" in t:
+                    kind = "yellow"
+                else:
+                    continue
+                eventos.append({"kind": kind, "clock": (x.get("clock") or {}).get("displayValue", ""),
+                                "side": "h" if (x.get("team") or {}).get("id") == hid else "a",
+                                "who": quien[0] if quien else ""})
             out.append({"key": (e.get("date") or "")[:16],
-                        "state": st["type"]["state"],          # pre | in | post
-                        "clock": st.get("displayClock"),
-                        "home": sc(h), "away": sc(a)})
+                        "state": e["status"]["type"]["state"],          # pre | in | post
+                        "clock": e["status"].get("displayClock"),
+                        "home": sc(h), "away": sc(a), "eventos": eventos})
         except Exception:
             continue
     return out
@@ -128,10 +145,12 @@ def overlay_espn(partidos, espn):
             if e["home"] is not None: p["golesLocal"] = e["home"]
             if e["away"] is not None: p["golesVisitante"] = e["away"]
             p["minuto"] = e["clock"]
+            p["eventos"] = e.get("eventos") or None
         elif e["state"] == "post":
             p["envivo"], p["jugado"], p["status"], p["minuto"] = False, True, "FINISHED", None
             if e["home"] is not None: p["golesLocal"] = e["home"]
             if e["away"] is not None: p["golesVisitante"] = e["away"]
+            p["eventos"] = e.get("eventos") or None
     return partidos
 
 

@@ -119,9 +119,14 @@ function _evRows(events) {
   const mark = ev => ev.kind === "yellow" ? '<span class="evcard yel"></span>'
     : ev.kind === "red" ? '<span class="evcard red"></span>' : _EVBALL;
   const sfx = ev => ev.kind === "pen" ? " (pen.)" : ev.kind === "og" ? " (p.p.)" : "";
-  return events.map(ev =>
+  return events.slice().reverse().map(ev =>   // más recientes arriba
     `<div class="evrow ${ev.side}"><span class="evmin">${ev.clock}</span>${mark(ev)}<span class="evwho">${ev.who}${sfx(ev)}</span></div>`
   ).join("");
+}
+// Timeline ya renderizada desde el servidor (data.json) → no desaparece al refrescar.
+function evlistHTML(eventos) {
+  const r = _evRows(eventos);
+  return r ? `<div class="evlist">${r}</div>` : "";
 }
 async function _pollLive() {
   const boxes = document.querySelectorAll(".bx2[data-live]");
