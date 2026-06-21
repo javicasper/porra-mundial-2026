@@ -103,15 +103,6 @@ async function _espnLive() {
     return out;
   } catch (e) { return {}; }
 }
-function _tickClocks() {
-  document.querySelectorAll(".bx2[data-live]").forEach(el => {
-    const base = el.dataset.baseMin, lv = el.querySelector(".lv");
-    if (!lv || base === undefined || base === "") return;
-    const sec = Math.floor((Date.now() - (+el.dataset.baseTs)) / 1000);
-    const mm = (+base) + Math.floor(sec / 60), ss = sec % 60;
-    lv.textContent = `● ${mm}:${ss < 10 ? "0" : ""}${ss}`;
-  });
-}
 async function _pollLive() {
   const boxes = document.querySelectorAll(".bx2[data-live]");
   if (!boxes.length) return;
@@ -122,11 +113,9 @@ async function _pollLive() {
     const s = el.querySelector(".s"), lv = el.querySelector(".lv");
     if (e.state === "in") {
       if (s && e.gl != null) { const nuevo = `${e.gl}-${e.gv}`; if (s.textContent !== nuevo) cambio = true; s.textContent = nuevo; }
-      const m = /^(\d+)'?$/.exec((e.clock || "").trim());
-      if (m) { el.dataset.baseMin = m[1]; el.dataset.baseTs = Date.now(); }
-      else { el.dataset.baseMin = ""; if (lv) lv.textContent = "● " + (e.clock || "EN JUEGO"); }
+      if (lv && e.clock) lv.textContent = "● " + e.clock;     // minuto real de ESPN (sin inventar segundos)
     } else if (e.state === "post") {
-      el.dataset.baseMin = ""; if (lv) lv.textContent = "● FINAL"; cambio = true;
+      if (lv) lv.textContent = "● FINAL"; cambio = true;
     }
   });
   if (cambio) _refresh();   // un gol o el final: que el resto (ranking) se ponga al día ya
@@ -134,7 +123,6 @@ async function _pollLive() {
 function liveEngine() {
   _pollLive();
   setInterval(_pollLive, 10000);
-  setInterval(_tickClocks, 1000);
 }
 
 function iniciar(render) {
