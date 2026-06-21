@@ -23,13 +23,11 @@ body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
 a{color:inherit;text-decoration:none}
 .wrap{max-width:600px;margin:0 auto;padding:0 20px calc(48px + env(safe-area-inset-bottom))}
 
-/* masthead (un solo título de sitio, igual en las dos páginas) */
-.hero{padding:24px 0 16px}
-.hero .eyebrow{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.hero .eyebrow .y{color:var(--mut2);font-weight:700;letter-spacing:.1em}
-.eyebrow{font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
-.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.1rem,9vw,3rem);line-height:1.02;
-  letter-spacing:-.015em;margin:7px 0 0}
+/* masthead · wordmark grande (igual en las dos páginas) */
+.hero{padding:22px 0 14px}
+.hero .yr{font-size:.7rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--mut)}
+.hero h1{font-family:var(--serif);font-weight:600;font-size:clamp(2.6rem,14vw,4rem);line-height:.92;
+  letter-spacing:-.02em;margin:3px 0 0}
 .hero .sub{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:.82rem;color:var(--mut);flex-wrap:wrap}
 .live{display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--ink);font-size:.72rem;letter-spacing:.05em}
 .live .dot{width:7px;height:7px;border-radius:50%;background:var(--live);animation:pulse 1.9s infinite}
