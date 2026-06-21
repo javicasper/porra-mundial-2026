@@ -75,7 +75,7 @@ function bracketHTML(P){
   const rf=levels[0].map[fin.b]||levels[0].ties[1];
   return `<div class="bkwrap"><div class="bktree">
     ${rn(node(lf,1),'left')}
-    <div class="bkfinal"><div class="bkfl">Final</div>${tieBox(fin)}<div class="bkch">🏆 ${fl(P.campeon)} ${P.campeon||"—"}</div></div>
+    <div class="bkfinal"><div class="bkfl">Final</div>${tieBox(fin)}<div class="bkch">${ICON.trophy} ${fl(P.campeon)} ${P.campeon||"—"}</div></div>
     ${rf?rn(node(rf,1),'right'):""}
   </div></div>`;
 }
@@ -90,11 +90,11 @@ function detalle(P, d){
   const jug = P.grupos.filter(g=>g.real);
   const pts = jug.reduce((a,g)=>a+g.pts,0);
   const picks = `<div class="picks">
-    <span class="pk">Campeón <b>${fl(P.campeon)} ${P.campeon||"—"}</b></span>
+    <span class="pk">${ICON.trophy} Campeón <b>${fl(P.campeon)} ${P.campeon||"—"}</b></span>
     <span class="pk">Subcampeón <b>${fl(P.subcampeon)} ${P.subcampeon||"—"}</b></span>
     <span class="pk">3.º <b>${fl(P.tercero)} ${P.tercero||"—"}</b></span>
-    <span class="pk">🥇 Bota <b>${P.bota_oro||"—"}</b></span>
-    <span class="pk">🏅 Balón <b>${P.balon_oro||"—"}</b></span></div>`;
+    <span class="pk">${ICON.boot} Bota <b>${P.bota_oro||"—"}</b></span>
+    <span class="pk">${ICON.ball} Balón <b>${P.balon_oro||"—"}</b></span></div>`;
   // hora de inicio de cada partido (para ordenar cronológicamente)
   const nm=s=>(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
   const kp=(a,b)=>[nm(a),nm(b)].sort().join("|");
@@ -155,11 +155,11 @@ function evolucion(d){
 
 function render(d){
   const html = d.ranking.map(p=>{
-    const m = p.pos===1?"🥇":p.pos===2?"🥈":p.pos===3?"🥉":p.pos;
+    const m = p.pos<=3 ? ICON.medal(p.pos) : p.pos;
     return `<div class="lr ${p.pos===1?'l1':''}" data-id="${p.id}">
         <div class="rk">${m}</div>
         <div class="who"><div class="n"><span class="fl">${fl(p.campeon)}</span>${p.nombre}</div>
-          <div class="meta2">${p.clavados} clavados · ${p.diferencias} dif · ${p.signos} signos</div></div>
+          <div class="meta2">${ICON.target}${p.clavados} clavados · ${p.diferencias} dif · ${p.signos} signos</div></div>
         <div class="pt"><div class="n">${p.puntos}</div><div class="u">pts</div></div>
         <div class="chev">▸</div>
       </div>

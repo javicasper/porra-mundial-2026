@@ -12,6 +12,20 @@ const FLAGS = {
   "Ghana":"🇬🇭","Panamá":"🇵🇦"
 };
 const fl = t => FLAGS[t] || "";
+
+/* Iconos SVG (Lucide/Tabler/Phosphor, MIT). Color horneado: verde clavados, oro el resto. */
+const _GOLD = "#bd9a2a", _GREEN = "#1d6b4c";
+const ICON = {
+  target: `<svg class="isvg" viewBox="0 0 24 24" fill="none" stroke="${_GREEN}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 12a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M12 7a5 5 0 1 0 5 5"/><path d="M13 3.055a9 9 0 1 0 7.941 7.945"/><path d="M15 6v3h3l3 -3h-3v-3l-3 3"/><path d="M15 9l-3 3"/></svg>`,
+  trophy: `<svg class="isvg" viewBox="0 0 24 24" fill="none" stroke="${_GOLD}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14.66v1.626a2 2 0 0 1-.976 1.696A5 5 0 0 0 7 21.978"/><path d="M14 14.66v1.626a2 2 0 0 0 .976 1.696A5 5 0 0 1 17 21.978"/><path d="M18 9h1.5a1 1 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M6 9a6 6 0 0 0 12 0V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1z"/><path d="M6 9H4.5a1 1 0 0 1 0-5H6"/></svg>`,
+  boot: `<svg class="isvg" viewBox="0 0 256 256" fill="${_GOLD}" aria-hidden="true"><path d="M231.16,166.63l-28.63-14.31A47.74,47.74,0,0,1,176,109.39V80a8,8,0,0,0-8-8,48.05,48.05,0,0,1-48-48,8,8,0,0,0-12.83-6.37L30.13,76l-.2.16a16,16,0,0,0-1.24,23.75L142.4,213.66a8,8,0,0,0,5.66,2.34H224a16,16,0,0,0,16-16V180.94A15.92,15.92,0,0,0,231.16,166.63ZM224,200H151.37L40,88.63l12.87-9.76,38.79,38.79A8,8,0,0,0,103,106.34L65.74,69.11l40-30.31A64.15,64.15,0,0,0,160,87.5v21.89a63.65,63.65,0,0,0,35.38,57.24L224,180.94ZM70.8,184H32a8,8,0,0,1,0-16H70.8a8,8,0,1,1,0,16Zm40,24a8,8,0,0,1-8,8H48a8,8,0,0,1,0-16h54.8A8,8,0,0,1,110.8,208Z"/></svg>`,
+  ball: `<svg class="isvg" viewBox="0 0 24 24" fill="none" stroke="${_GOLD}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M12 7l4.76 3.45l-1.76 5.55h-6l-1.76 -5.55l4.76 -3.45"/><path d="M12 7v-4m3 13l2.5 3m-.74 -8.55l3.74 -1.45m-11.44 7.05l-2.56 2.95m.74 -8.55l-3.74 -1.45"/></svg>`,
+  medal: pos => {
+    const c = pos === 1 ? "#bd9a2a" : pos === 2 ? "#9aa1ac" : "#b3784a";
+    return `<svg class="isvg medal" viewBox="0 0 24 24" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 3l2.4 5.2M15.5 3l-2.4 5.2"/><circle cx="12" cy="14.5" r="5.3" fill="${c}" stroke="none"/><path d="M12 11.7l.85 1.72 1.9.28-1.37 1.34.32 1.9L12 16.34l-1.7.9.32-1.9-1.37-1.34 1.9-.28z" fill="#fffefb" stroke="none"/></svg>`;
+  },
+};
+
 const $ = s => document.querySelector(s);
 const MAD = { timeZone: "Europe/Madrid" };
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);

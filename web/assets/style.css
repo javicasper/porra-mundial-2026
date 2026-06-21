@@ -11,6 +11,10 @@
   --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.isvg{width:1.05em;height:1.05em;vertical-align:-.16em;flex:none}
+.rk .isvg{width:23px;height:23px;vertical-align:middle}
+.bkch .isvg{vertical-align:-.18em}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
