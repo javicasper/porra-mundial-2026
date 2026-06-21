@@ -85,6 +85,58 @@ function _sig(d) {
   const p = d.partidos.map(x => `${x.status}|${x.golesLocal}|${x.golesVisitante}|${x.minuto || ""}`).join(",");
   return d.meta.jugados + "#" + r + "#" + p;
 }
+/* ---- Motor de DIRECTO desde el cliente ----
+   ESPN permite fetch directo (CORS *). Pedimos su marcador cada 10s (latencia
+   casi nula) y, entre peticiones, un reloj corre cada segundo (MM:SS). Solo
+   parchea las cajas .bx2[data-live] en sitio: ni re-render ni saltos. */
+let _refresh = () => {};
+async function _espnLive() {
+  try {
+    const r = await fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard", { cache: "no-store" });
+    if (!r.ok) return {};
+    const d = await r.json(), out = {};
+    for (const e of d.events || []) {
+      const st = e.status, c = e.competitions[0].competitors;
+      const h = c.find(x => x.homeAway === "home"), a = c.find(x => x.homeAway === "away");
+      out[(e.date || "").slice(0, 16)] = { state: st.type.state, clock: st.displayClock, gl: h && h.score, gv: a && a.score };
+    }
+    return out;
+  } catch (e) { return {}; }
+}
+function _tickClocks() {
+  document.querySelectorAll(".bx2[data-live]").forEach(el => {
+    const base = el.dataset.baseMin, lv = el.querySelector(".lv");
+    if (!lv || base === undefined || base === "") return;
+    const sec = Math.floor((Date.now() - (+el.dataset.baseTs)) / 1000);
+    const mm = (+base) + Math.floor(sec / 60), ss = sec % 60;
+    lv.textContent = `● ${mm}:${ss < 10 ? "0" : ""}${ss}`;
+  });
+}
+async function _pollLive() {
+  const boxes = document.querySelectorAll(".bx2[data-live]");
+  if (!boxes.length) return;
+  const esp = await _espnLive();
+  let cambio = false;
+  boxes.forEach(el => {
+    const e = esp[el.dataset.live]; if (!e) return;
+    const s = el.querySelector(".s"), lv = el.querySelector(".lv");
+    if (e.state === "in") {
+      if (s && e.gl != null) { const nuevo = `${e.gl}-${e.gv}`; if (s.textContent !== nuevo) cambio = true; s.textContent = nuevo; }
+      const m = /^(\d+)'?$/.exec((e.clock || "").trim());
+      if (m) { el.dataset.baseMin = m[1]; el.dataset.baseTs = Date.now(); }
+      else { el.dataset.baseMin = ""; if (lv) lv.textContent = "● " + (e.clock || "EN JUEGO"); }
+    } else if (e.state === "post") {
+      el.dataset.baseMin = ""; if (lv) lv.textContent = "● FINAL"; cambio = true;
+    }
+  });
+  if (cambio) _refresh();   // un gol o el final: que el resto (ranking) se ponga al día ya
+}
+function liveEngine() {
+  _pollLive();
+  setInterval(_pollLive, 10000);
+  setInterval(_tickClocks, 1000);
+}
+
 function iniciar(render) {
   const ciclo = async () => {
     try {
@@ -113,6 +165,8 @@ function iniciar(render) {
       const v = $("#view"); if (v && !_lastSig) v.innerHTML = `<div class="err">No se pudo cargar data.json (${e.message}).</div>`;
     }
   };
+  _refresh = ciclo;
   ciclo();
   setInterval(ciclo, 30000);
+  liveEngine();
 }

@@ -114,7 +114,7 @@ function detalle(P, d){
 }
 function wc(p,s){ if(!p.jugado||p.golesLocal===p.golesVisitante) return ""; const hw=p.golesLocal>p.golesVisitante; return (s==="h"?hw:!hw)?"win":""; }
 function box(p){
-  if(p.envivo) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="lv">● ${liveMinute(p)}</div></div>`;
+  if(p.envivo) return `<div class="bx2" data-live="${(p.utc||'').slice(0,16)}"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="lv">● ${liveMinute(p)}</div></div>`;
   if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">FINAL</div></div>`;
   return `<div class="bx2"><div class="t">${hora(p.utc)}</div></div>`;
 }
