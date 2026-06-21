@@ -130,8 +130,7 @@ function liveBanner(d){
       <div class="ta ${wc(p,'a')}"><span class="fl">${fl(p.visitante)}</span>${p.visitante||"Por definir"}</div>
       <div class="tag"><span>${tag}</span></div></div>${evlistHTML(p)}`;
   }).join("");
-  return `<div class="sec live-sec"><span class="dot"></span>En directo</div>
-    <a href="mundial.html" class="livelink"><div class="card livecard">${rows}</div></a>`;
+  return `<a href="mundial.html" class="livelink"><div class="card livecard">${rows}</div></a>`;
 }
 
 const COL=["#e6194B","#3cb44b","#4363d8","#f58231","#911eb4","#1ca9c9","#f032e6","#9A6324","#469990","#bf6f00","#800000","#000075","#a0a000"];
