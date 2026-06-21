@@ -90,18 +90,38 @@ function _sig(d) {
    casi nula) y, entre peticiones, un reloj corre cada segundo (MM:SS). Solo
    parchea las cajas .bx2[data-live] en sitio: ni re-render ni saltos. */
 let _refresh = () => {};
+const _EVBALL = `<svg class="evball" viewBox="0 0 24 24" fill="none" stroke="#15161b" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"/><path d="M12 7l4.76 3.45l-1.76 5.55h-6l-1.76 -5.55l4.76 -3.45"/></svg>`;
 async function _espnLive() {
   try {
     const r = await fetch("https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard", { cache: "no-store" });
     if (!r.ok) return {};
     const d = await r.json(), out = {};
     for (const e of d.events || []) {
-      const st = e.status, c = e.competitions[0].competitors;
+      const comp = e.competitions[0], c = comp.competitors;
       const h = c.find(x => x.homeAway === "home"), a = c.find(x => x.homeAway === "away");
-      out[(e.date || "").slice(0, 16)] = { state: st.type.state, clock: st.displayClock, gl: h && h.score, gv: a && a.score };
+      const hid = h && h.team && h.team.id;
+      const events = (comp.details || []).map(x => {
+        const t = (x.type || {}).text || "", who = (x.athletesInvolved || []).map(z => z.displayName).filter(Boolean)[0] || "";
+        let kind = null;
+        if (x.scoringPlay || /Goal/.test(t)) kind = x.ownGoal ? "og" : (x.penaltyKick ? "pen" : "goal");
+        else if (x.redCard || /Red/.test(t)) kind = "red";
+        else if (x.yellowCard || /Yellow/.test(t)) kind = "yellow";
+        else return null;
+        return { kind, clock: (x.clock || {}).displayValue || "", side: ((x.team || {}).id === hid) ? "h" : "a", who };
+      }).filter(Boolean);
+      out[(e.date || "").slice(0, 16)] = { state: e.status.type.state, clock: e.status.displayClock, gl: h && h.score, gv: a && a.score, events };
     }
     return out;
   } catch (e) { return {}; }
+}
+function _evRows(events) {
+  if (!events || !events.length) return "";
+  const mark = ev => ev.kind === "yellow" ? '<span class="evcard yel"></span>'
+    : ev.kind === "red" ? '<span class="evcard red"></span>' : _EVBALL;
+  const sfx = ev => ev.kind === "pen" ? " (pen.)" : ev.kind === "og" ? " (p.p.)" : "";
+  return events.map(ev =>
+    `<div class="evrow ${ev.side}"><span class="evmin">${ev.clock}</span>${mark(ev)}<span class="evwho">${ev.who}${sfx(ev)}</span></div>`
+  ).join("");
 }
 async function _pollLive() {
   const boxes = document.querySelectorAll(".bx2[data-live]");
@@ -116,6 +136,17 @@ async function _pollLive() {
       if (lv && e.clock) lv.textContent = "● " + e.clock;     // minuto real de ESPN (sin inventar segundos)
     } else if (e.state === "post") {
       if (lv) lv.textContent = "● FINAL"; cambio = true;
+    }
+    // timeline de eventos (goles/tarjetas) bajo el partido en directo
+    const mt = el.closest(".mt");
+    if (mt) {
+      const rows = _evRows(e.events);
+      let panel = mt.nextElementSibling;
+      const isPanel = panel && panel.classList && panel.classList.contains("evlist");
+      if (rows) {
+        if (!isPanel) { panel = document.createElement("div"); panel.className = "evlist"; mt.parentNode.insertBefore(panel, mt.nextSibling); }
+        if (panel.innerHTML !== rows) panel.innerHTML = rows;
+      } else if (isPanel) { panel.remove(); }
     }
   });
   if (cambio) _refresh();   // un gol o el final: que el resto (ranking) se ponga al día ya

@@ -124,6 +124,16 @@ a{color:inherit;text-decoration:none}
 .livecard{border-color:#eec7c0;background:#fdf5f3;margin-bottom:4px}
 .livecard .mt:first-child{border-top:none}
 .livelink{display:block;color:inherit}
+/* timeline de eventos del partido en vivo */
+.evlist{display:flex;flex-direction:column;gap:6px;padding:10px 14px 12px;background:#fdf5f3}
+.evrow{display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--ink)}
+.evrow.a{flex-direction:row-reverse;text-align:right}
+.evmin{font-variant-numeric:tabular-nums;font-weight:700;color:var(--mut);min-width:32px}
+.evrow.a .evmin{text-align:right}
+.evcard{width:9px;height:12px;border-radius:1.5px;flex:none}
+.evcard.yel{background:#e3b505}.evcard.red{background:#c5392b}
+.evball{width:14px;height:14px;flex:none}
+.evwho{font-weight:600}
 .fbar{display:flex;gap:7px;margin:2px 0 6px}
 .fbtn{font-size:.8rem;font-weight:600;padding:7px 14px;border-radius:99px;background:var(--card);
   border:1px solid var(--hair);color:var(--mut);cursor:pointer}
