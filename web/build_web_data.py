@@ -85,6 +85,7 @@ def build_partidos(matches):
             "minuto": None,
             "eventos": None,
             "stats": None,
+            "colores": None,
         })
     out.sort(key=lambda x: (x["utc"] or "9999"))
     return out
@@ -140,10 +141,28 @@ def fetch_espn():
             if all(v is None for pair in stats.values() for v in pair):
                 stats = None
 
+            def color(team):
+                t = team.get("team") or {}
+                c, alt = t.get("color") or "", t.get("alternateColor") or ""
+                def claro(x):
+                    try:
+                        r, g, b = int(x[0:2], 16), int(x[2:4], 16), int(x[4:6], 16)
+                        return 0.2126 * r + 0.7152 * g + 0.0722 * b > 200
+                    except (ValueError, IndexError):
+                        return True
+                pick = c if (c and not claro(c)) else (alt if (alt and not claro(alt)) else (c or alt))
+                return "#" + pick if pick else None
+            colores = [color(h), color(a)]
+
+            ty = e["status"]["type"]
+            clock = e["status"].get("displayClock")
+            if ty.get("name") == "STATUS_HALFTIME" or ty.get("shortDetail") == "HT":
+                clock = "Descanso"
+
             out.append({"key": (e.get("date") or "")[:16],
-                        "state": e["status"]["type"]["state"],          # pre | in | post
-                        "clock": e["status"].get("displayClock"),
-                        "home": sc(h), "away": sc(a), "eventos": eventos, "stats": stats})
+                        "state": ty["state"],          # pre | in | post
+                        "clock": clock,
+                        "home": sc(h), "away": sc(a), "eventos": eventos, "stats": stats, "colores": colores})
         except Exception:
             continue
     return out
@@ -164,12 +183,14 @@ def overlay_espn(partidos, espn):
             p["minuto"] = e["clock"]
             p["eventos"] = e.get("eventos") or None
             p["stats"] = e.get("stats")
+            p["colores"] = e.get("colores")
         elif e["state"] == "post":
             p["envivo"], p["jugado"], p["status"], p["minuto"] = False, True, "FINISHED", None
             if e["home"] is not None: p["golesLocal"] = e["home"]
             if e["away"] is not None: p["golesVisitante"] = e["away"]
             p["eventos"] = e.get("eventos") or None
             p["stats"] = e.get("stats")
+            p["colores"] = e.get("colores")
     return partidos
 
 

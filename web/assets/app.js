@@ -123,12 +123,23 @@ async function _espnLive() {
         faltas: [stf(h, "foulsCommitted"), stf(a, "foulsCommitted")],
       };
       const hayStats = Object.values(stats).some(p => p.some(v => v != null));
-      out[(e.date || "").slice(0, 16)] = { state: e.status.type.state, clock: e.status.displayClock, gl: h && h.score, gv: a && a.score, events, stats: hayStats ? stats : null };
+      const colores = [_teamColor(h.team), _teamColor(a.team)];
+      const ty = e.status.type;
+      const clock = (ty.name === "STATUS_HALFTIME" || ty.shortDetail === "HT") ? "Descanso" : e.status.displayClock;
+      out[(e.date || "").slice(0, 16)] = { state: ty.state, clock, gl: h && h.score, gv: a && a.score, events, stats: hayStats ? stats : null, colores };
     }
     return out;
   } catch (e) { return {}; }
 }
 
+// color de selección (de ESPN); cae al alternativo si el principal es muy claro
+function _teamColor(team) {
+  const c = (team && team.color) || "", alt = (team && team.alternateColor) || "";
+  const claro = x => { const n = parseInt(x, 16); if (isNaN(n) || x.length < 6) return true;
+    return (0.2126 * (n >> 16) + 0.7152 * ((n >> 8) & 255) + 0.0722 * (n & 255)) > 200; };
+  const pick = (c && !claro(c)) ? c : ((alt && !claro(alt)) ? alt : (c || alt));
+  return pick ? "#" + pick : null;
+}
 // ---- Panel del partido en vivo: eventos (colapsable) + estadísticas ----
 const _panelOpen = {};   // key utc -> ¿eventos expandidos?
 const _STAT_LBL = { posesion: "Posesión", tiros: "Tiros", aPuerta: "Tiros a puerta", corners: "Córners", faltas: "Faltas" };
@@ -144,15 +155,16 @@ function _evRows(events, limit) {
     `<div class="evrow ${ev.side}"><span class="evmin">${ev.clock}</span>${mark(ev)}<span class="evwho">${ev.who}${sfx(ev)}</span></div>`
   ).join("");
 }
-function _statsHTML(stats) {
+function _statsHTML(stats, colores) {
   if (!stats) return "";
   const num = v => v == null ? "–" : v;
+  const cH = (colores && colores[0]) || "var(--accent)", cA = (colores && colores[1]) || "#df9b7a";
   const pos = stats.posesion || [null, null];
   let h = "";
   if (pos[0] != null || pos[1] != null) {
     const ph = +pos[0] || 0, pa = +pos[1] || 0, tot = (ph + pa) || 1;
     h += `<div class="statposs"><span>${num(pos[0])}%</span><b>Posesión</b><span>${num(pos[1])}%</span></div>
-      <div class="possbar"><i style="width:${Math.round(100 * ph / tot)}%"></i></div>`;
+      <div class="possbar" style="background:${cA}"><i style="width:${Math.round(100 * ph / tot)}%;background:${cH}"></i></div>`;
   }
   for (const k of ["tiros", "aPuerta", "corners", "faltas"]) {
     const v = stats[k]; if (!v || (v[0] == null && v[1] == null)) continue;
@@ -161,7 +173,7 @@ function _statsHTML(stats) {
   return h ? `<div class="statbox">${h}</div>` : "";
 }
 // Contenido del panel (eventos colapsables + stats). Lo usan servidor-render y cliente.
-function livePanelInner(key, eventos, stats) {
+function livePanelInner(key, eventos, stats, colores) {
   const evs = eventos || [];
   let ev = "";
   if (evs.length) {
@@ -169,15 +181,15 @@ function livePanelInner(key, eventos, stats) {
     ev = `<div class="evlist">${_evRows(evs, open ? 0 : 3)}</div>`;
     if (evs.length > 3) ev += `<button class="evmore" data-key="${key}">${open ? "Ocultar" : "Ver " + (evs.length - 3) + " más"}</button>`;
   }
-  return ev + _statsHTML(stats);
+  return ev + _statsHTML(stats, colores);
 }
-function livePanel(key, eventos, stats) {
-  const inner = livePanelInner(key, eventos, stats);
+function livePanel(key, eventos, stats, colores) {
+  const inner = livePanelInner(key, eventos, stats, colores);
   return inner ? `<div class="livepanel" data-key="${key}">${inner}</div>` : "";
 }
 // compat: el render de las páginas llama a esto por cada partido en vivo
 function evlistHTML(p) {
-  return livePanel((p.utc || "").slice(0, 16), p.eventos, p.stats);
+  return livePanel((p.utc || "").slice(0, 16), p.eventos, p.stats, p.colores);
 }
 
 async function _pollLive() {
@@ -196,7 +208,7 @@ async function _pollLive() {
     }
     const mt = el.closest(".mt");
     if (mt) {
-      const inner = livePanelInner(key, e.events, e.stats);
+      const inner = livePanelInner(key, e.events, e.stats, e.colores);
       let panel = mt.nextElementSibling;
       const isPanel = panel && panel.classList && panel.classList.contains("livepanel");
       if (inner) {
@@ -215,7 +227,7 @@ document.addEventListener("click", ev => {
   _panelOpen[key] = !_panelOpen[key];
   const panel = document.querySelector(`.livepanel[data-key="${key}"]`);
   const p = _data && (_data.partidos || []).find(x => (x.utc || "").slice(0, 16) === key);
-  if (panel && p) panel.innerHTML = livePanelInner(key, p.eventos, p.stats);
+  if (panel && p) panel.innerHTML = livePanelInner(key, p.eventos, p.stats, p.colores);
 });
 function liveEngine() {
   _pollLive();
