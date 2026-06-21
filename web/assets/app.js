@@ -66,7 +66,7 @@ function pintarMeta(d) {
   const m = d.meta, el = $("#meta");
   if (el) el.innerHTML =
     `<span class="live"><span class="dot"></span>EN VIVO</span>
-     <span class="bul"></span><span><b>${m.jugados}</b>/${m.total_grupos} partidos</span>
+     <span class="bul"></span><span><b>${m.jugados}</b>/${m.total_grupos}</span>
      <span class="bul"></span><span>Líder${m.n_lideres>1?"es":""} <b>${m.lider}</b></span>`;
   const f = $("#foot");
   if (f) f.innerHTML =
