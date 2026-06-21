@@ -74,12 +74,45 @@ function pintarMeta(d) {
      Actualizado ${new Date(d.generado).toLocaleString("es-ES", MAD)}`;
 }
 
-// Arranca una página: carga datos, llama render(d), y refresca cada 60s.
+// Arranca una página. Refresca cada 30s, pero SOLO re-renderiza si los datos
+// cambiaron (compara `generado`), preservando scroll y filas abiertas. Así el
+// marcador en vivo entra solo sin cerrar lo que tengas abierto ni dar saltos.
+let _lastSig = null;
+// Firma del contenido que de verdad importa (ignora el timestamp `generado`, que
+// cambia en cada regeneración aunque el marcador siga igual).
+function _sig(d) {
+  const r = d.ranking.map(x => `${x.id}:${x.puntos}:${x.clavados}`).join(",");
+  const p = d.partidos.map(x => `${x.status}|${x.golesLocal}|${x.golesVisitante}|${x.minuto || ""}`).join(",");
+  return d.meta.jugados + "#" + r + "#" + p;
+}
 function iniciar(render) {
   const ciclo = async () => {
-    try { _data = null; const d = await getData(); pintarMeta(d); render(d); }
-    catch (e) { const v = $("#view"); if (v) v.innerHTML = `<div class="err">No se pudo cargar data.json (${e.message}).</div>`; }
+    try {
+      _data = null;
+      const d = await getData();
+      pintarMeta(d);
+      const sig = _sig(d);
+      if (sig === _lastSig) return;                 // nada nuevo: no tocar el DOM
+      const y = window.scrollY;
+      const abiertas = [...document.querySelectorAll(".lr.open")].map(r => r.dataset.id);
+      render(d);
+      // re-abrir las fichas que estaban desplegadas
+      abiertas.forEach(id => {
+        const r = document.querySelector(`.lr[data-id="${id}"]`);
+        const pd = r && r.nextElementSibling;
+        if (pd && pd.classList.contains("pdet")) {
+          r.classList.add("open");
+          if (!pd.dataset.built && typeof detalle === "function") {
+            pd.innerHTML = detalle(d.participantes[id], d); pd.dataset.built = "1";
+          }
+        }
+      });
+      window.scrollTo(0, y);
+      _lastSig = sig;
+    } catch (e) {
+      const v = $("#view"); if (v && !_lastSig) v.innerHTML = `<div class="err">No se pudo cargar data.json (${e.message}).</div>`;
+    }
   };
   ciclo();
-  setInterval(ciclo, 60000);
+  setInterval(ciclo, 30000);
 }

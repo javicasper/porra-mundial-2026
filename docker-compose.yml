@@ -23,7 +23,7 @@ services:
     command: >
       sh -c "while true; do
                python web/build_web_data.py && echo \"[$(date -u +%H:%M:%S)] data.json actualizado\" || echo 'fallo refresco';
-               sleep 60;
+               sleep 30;
              done"
 
 networks:
