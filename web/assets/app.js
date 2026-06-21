@@ -1,17 +1,21 @@
 /* Utilidades compartidas entre las dos páginas. Sin lógica de render: cada página la suya. */
-const FLAGS = {
-  "México":"🇲🇽","Sudáfrica":"🇿🇦","Corea del Sur":"🇰🇷","República Checa":"🇨🇿","Canadá":"🇨🇦",
-  "Catar":"🇶🇦","Suiza":"🇨🇭","Bosnia y Herzegovina":"🇧🇦","Brasil":"🇧🇷","Marruecos":"🇲🇦",
-  "Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Haití":"🇭🇹","Estados Unidos":"🇺🇸","Turquía":"🇹🇷","Paraguay":"🇵🇾",
-  "Australia":"🇦🇺","Alemania":"🇩🇪","Costa de Marfil":"🇨🇮","Ecuador":"🇪🇨","Curazao":"🇨🇼",
-  "Países Bajos":"🇳🇱","Suecia":"🇸🇪","Túnez":"🇹🇳","Japón":"🇯🇵","Bélgica":"🇧🇪",
-  "Nueva Zelanda":"🇳🇿","Egipto":"🇪🇬","Irán":"🇮🇷","España":"🇪🇸","Uruguay":"🇺🇾",
-  "Arabia Saudita":"🇸🇦","Cabo Verde":"🇨🇻","Francia":"🇫🇷","Noruega":"🇳🇴","Senegal":"🇸🇳",
-  "Irak":"🇮🇶","Argentina":"🇦🇷","Austria":"🇦🇹","Argelia":"🇩🇿","Jordania":"🇯🇴","Portugal":"🇵🇹",
-  "Colombia":"🇨🇴","RD Congo":"🇨🇩","Uzbekistán":"🇺🇿","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croacia":"🇭🇷",
-  "Ghana":"🇬🇭","Panamá":"🇵🇦"
+/* Banderas como SVG (flag-icons) en vez de emoji: se ven igual en todos los SO (Windows no pinta emoji-bandera). */
+const FLAG_CODES = {
+  "México":"mx","Sudáfrica":"za","Corea del Sur":"kr","República Checa":"cz","Canadá":"ca",
+  "Catar":"qa","Suiza":"ch","Bosnia y Herzegovina":"ba","Brasil":"br","Marruecos":"ma",
+  "Escocia":"gb-sct","Haití":"ht","Estados Unidos":"us","Turquía":"tr","Paraguay":"py",
+  "Australia":"au","Alemania":"de","Costa de Marfil":"ci","Ecuador":"ec","Curazao":"cw",
+  "Países Bajos":"nl","Suecia":"se","Túnez":"tn","Japón":"jp","Bélgica":"be",
+  "Nueva Zelanda":"nz","Egipto":"eg","Irán":"ir","España":"es","Uruguay":"uy",
+  "Arabia Saudita":"sa","Cabo Verde":"cv","Francia":"fr","Noruega":"no","Senegal":"sn",
+  "Irak":"iq","Argentina":"ar","Austria":"at","Argelia":"dz","Jordania":"jo","Portugal":"pt",
+  "Colombia":"co","RD Congo":"cd","Uzbekistán":"uz","Inglaterra":"gb-eng","Croacia":"hr",
+  "Ghana":"gh","Panamá":"pa"
 };
-const fl = t => FLAGS[t] || "";
+const fl = t => {
+  const c = FLAG_CODES[t];
+  return c ? `<img class="flag" src="assets/flags/${c}.svg" alt="" loading="lazy">` : "";
+};
 
 /* Iconos SVG (Lucide/Tabler/Phosphor, MIT). Color horneado: verde clavados, oro el resto. */
 const _GOLD = "#bd9a2a", _GREEN = "#1d6b4c";

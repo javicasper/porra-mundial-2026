@@ -13,6 +13,8 @@
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 @media (prefers-reduced-motion: reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 .isvg{width:1.05em;height:1.05em;vertical-align:-.16em;flex:none}
+.flag{display:inline-block;width:1.4em;height:1.05em;object-fit:cover;border-radius:2px;
+  vertical-align:-.16em;box-shadow:0 0 0 1px rgba(0,0,0,.08);flex:none}
 .rk .isvg{width:23px;height:23px;vertical-align:middle}
 .bkch .isvg{vertical-align:-.18em}
 html{-webkit-text-size-adjust:100%}
