@@ -19,7 +19,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from scoring import puntuar, buscar_cruce, _equipos  # noqa: E402
 from ko_resultados import build_ko, _norm  # noqa: E402
 
-PRED = json.loads((Path(__file__).resolve().parent.parent / "data" / "predicciones.json").read_text(encoding="utf-8"))
+_PF = Path(__file__).resolve().parent.parent / "data" / "predicciones.json"
+if not _PF.exists():
+    _PF = Path(__file__).resolve().parent.parent / "data" / "predicciones.sample.json"
+PRED = json.loads(_PF.read_text(encoding="utf-8"))
 RONDAS = [("cruces_dieciseisavos", "Dieciseisavos", "clasif_octavos"),
           ("cruces_octavos", "Octavos", "clasif_cuartos"),
           ("cruces_cuartos", "Cuartos", "clasif_semis"),

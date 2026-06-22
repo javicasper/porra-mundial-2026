@@ -1,0 +1,33 @@
+name: Test y Deploy
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tests del motor (datos de ejemplo)
+        run: |
+          python engine/test_motor.py
+          python engine/test_ko.py
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Desplegar por SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy
+          chmod 600 ~/.ssh/deploy
+          # La clave está restringida en el servidor a ejecutar solo ci-deploy.sh
+          ssh -i ~/.ssh/deploy -o StrictHostKeyChecking=no -o ConnectTimeout=20 \
+              -p "${{ secrets.DEPLOY_PORT || '22' }}" \
+              "${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}" deploy
