@@ -37,6 +37,11 @@ const hora   = u => u ? new Date(u).toLocaleTimeString("es-ES", { ...MAD, hour:"
 const diaKey = u => u ? new Date(u).toLocaleDateString("sv-SE", MAD) : "9999";
 const diaLbl = u => u ? cap(new Date(u).toLocaleDateString("es-ES", { ...MAD, weekday:"long", day:"numeric", month:"long" })) : "";
 
+// Normaliza nombre de selección (sin acentos, minúsculas) para casar partido<->pronóstico.
+const _norm = s => (s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
+// Clave de partido independiente del orden local/visitante.
+const pkey = (a,b) => [_norm(a),_norm(b)].sort().join("|");
+
 // Minuto EN VIVO estimado desde el inicio (la API gratis no da el minuto real).
 // IN_PLAY -> minuto aproximado; PAUSED -> "Descanso".
 function liveMinute(p) {
@@ -209,10 +214,13 @@ async function _pollLive() {
     const mt = el.closest(".mt");
     if (mt) {
       const inner = livePanelInner(key, e.events, e.stats, e.colores);
-      let panel = mt.nextElementSibling;
+      // el panel de directo va tras la fila y, si existe, tras el de pronósticos
+      let after = mt;
+      if (after.nextElementSibling && after.nextElementSibling.classList.contains("preds")) after = after.nextElementSibling;
+      let panel = after.nextElementSibling;
       const isPanel = panel && panel.classList && panel.classList.contains("livepanel");
       if (inner) {
-        if (!isPanel) { panel = document.createElement("div"); panel.className = "livepanel"; panel.dataset.key = key; mt.parentNode.insertBefore(panel, mt.nextSibling); }
+        if (!isPanel) { panel = document.createElement("div"); panel.className = "livepanel"; panel.dataset.key = key; after.parentNode.insertBefore(panel, after.nextSibling); }
         if (panel.innerHTML !== inner) panel.innerHTML = inner;
       } else if (isPanel) { panel.remove(); }
     }

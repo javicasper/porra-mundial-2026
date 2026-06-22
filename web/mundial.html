@@ -83,19 +83,72 @@ function box(p){
   if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">FINAL</div></div>`;
   return `<div class="bx2"><div class="t">${hora(p.utc)}</div></div>`;
 }
-function matchRow(p){
+function matchRow(p, withPreds){
   const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : p.fase;
-  return `<div class="mt">
+  const k = pkey(p.local, p.visitante);
+  const has = withPreds && !!(PREDIDX[k] && PREDIDX[k].length);
+  const open = has && !!_predsOpen[k];
+  const chev = has ? `<span class="pchev" aria-hidden="true">›</span>` : "";
+  return `<div class="mt${has?' clk':''}${open?' on':''}"${has?` data-pk="${k}"`:""}>
     <div class="th ${wc(p,'h')}">${p.local||"Por definir"}<span class="fl">${fl(p.local)}</span></div>
     ${box(p)}
     <div class="ta ${wc(p,'a')}"><span class="fl">${fl(p.visitante)}</span>${p.visitante||"Por definir"}</div>
-    <div class="tag"><span>${tag}</span></div></div>`;
+    <div class="tag"><span>${tag}</span>${chev}</div></div>`;
 }
+
+/* --- pronósticos por partido (todos los participantes) --- */
+let PREDIDX = {};            // clave partido -> [{nombre, local, visitante, pred, pts, tier}]
+const _predsOpen = {};       // clave -> ¿panel desplegado? (sobrevive a re-render)
+function buildPredIndex(d){
+  PREDIDX = {};
+  Object.values(d.participantes||{}).forEach(P=>{
+    (P.grupos||[]).forEach(g=>{
+      const k = pkey(g.local, g.visitante);
+      (PREDIDX[k] = PREDIDX[k] || []).push(
+        {nombre:P.nombre, local:g.local, visitante:g.visitante, pred:g.pred, pts:g.pts, tier:g.tier});
+    });
+  });
+}
+// Puntos provisionales de un partido EN JUEGO (reglas de grupos), calculados en
+// cliente contra el marcador en vivo. Los finalizados ya vienen puntuados del motor.
+function _liveTier(ph, pa, gl, gv){
+  if(ph==null || pa==null || gl==null || gv==null) return {tier:null, pts:0};
+  const sp = ph>pa?1:(pa>ph?2:0), sr = gl>gv?1:(gv>gl?2:0);
+  if(ph===gl && pa===gv) return {tier:"exacto", pts:5};
+  if(sp===sr && (ph-pa)===(gl-gv)) return {tier:"diferencia", pts:2};
+  if(sp===sr) return {tier:"signo", pts:1};
+  return {tier:null, pts:0};
+}
+function predsPanel(p){
+  const k = pkey(p.local, p.visitante);
+  const arr = PREDIDX[k];
+  if(!arr || !arr.length) return "";
+  const TC = {exacto:"b5", diferencia:"b2", signo:"b1"};
+  const rows = arr.map(x=>{
+    // orienta el marcador pronosticado al local/visitante de ESTE partido
+    let h = x.pred && x.pred.home, a = x.pred && x.pred.away;
+    if(x.pred && _norm(x.local) !== _norm(p.local)){ const t=h; h=a; a=t; }
+    let pts=null, tier=null;
+    if(p.jugado){ pts = x.pts; tier = x.tier; }                       // puntuación oficial
+    else if(p.envivo){ const r=_liveTier(h,a,p.golesLocal,p.golesVisitante); pts=r.pts; tier=r.tier; }
+    return {nombre:x.nombre, sc: x.pred ? `${h}-${a}` : "—", pts, tier};
+  });
+  const visto = p.jugado || p.envivo;
+  rows.sort((a,b)=> visto ? ((b.pts||0)-(a.pts||0)) || a.nombre.localeCompare(b.nombre)
+                          : a.nombre.localeCompare(b.nombre));
+  const chips = rows.map(x=>{
+    const bdg = visto ? `<span class="bdg ${TC[x.tier]||'b0'}">${x.pts>0?"+"+x.pts:x.pts}</span>` : "";
+    return `<div class="prc"><span class="pn">${x.nombre}</span><span class="ps">${x.sc}</span>${bdg}</div>`;
+  }).join("");
+  const leg = visto ? `<div class="prleg">${p.envivo?'<b class="prov">Provisional</b>':''}<span class="bdg b5">5</span>clavado<span class="bdg b2">2</span>dif.<span class="bdg b1">1</span>signo<span class="bdg b0">0</span>fallo</div>` : "";
+  return `<div class="preds${_predsOpen[k]?' open':''}" data-pk="${k}">${leg}<div class="prgrid">${chips}</div></div>`;
+}
+function matchBlock(p){ return matchRow(p, true) + predsPanel(p); }
 
 function liveSection(d){
   const live = d.partidos.filter(p=>p.envivo).sort((a,b)=>(a.utc||"")<(b.utc||"")?-1:1);
   if(!live.length) return "";
-  return `<div class="card livecard">${live.map(p=>matchRow(p)+evlistHTML(p)).join("")}</div>`;
+  return `<div class="card livecard">${live.map(p=>matchRow(p,true)+predsPanel(p)+evlistHTML(p)).join("")}</div>`;
 }
 
 function resultados(d){
@@ -107,7 +160,7 @@ function resultados(d){
   let keys=Object.keys(g).sort(); if(desc) keys.reverse();
   const body=keys.map(k=>{
     const arr=g[k].sort((a,b)=>{const r=(a.utc||"")<(b.utc||"")?-1:1; return desc?-r:r;});
-    return `<div><div class="day">${diaLbl(arr[0].utc)}</div>${arr.map(matchRow).join("")}</div>`;
+    return `<div><div class="day">${diaLbl(arr[0].utc)}</div>${arr.map(matchBlock).join("")}</div>`;
   }).join("");
   const f=x=>`<div class="fbtn ${CALF===x?'on':''}" data-f="${x}">${{jugados:"Jugados",proximos:"Próximos",todos:"Todos"}[x]}</div>`;
   return `<div class="sec">Resultados y calendario</div>
@@ -128,11 +181,22 @@ function goleadores(d){
 }
 
 function render(d){
+  buildPredIndex(d);
   $("#view").innerHTML = liveSection(d) + resultados(d) + grupos(d) + goleadores(d) + cruces(d);
   document.querySelectorAll(".fbtn").forEach(b=>b.addEventListener("click",()=>{
     CALF=b.dataset.f; render(d);
   }));
 }
+
+// Toggle de pronósticos por partido (delegado: sobrevive a re-render y filtros).
+document.addEventListener("click", ev=>{
+  const row = ev.target.closest(".mt.clk"); if(!row) return;
+  const k = row.dataset.pk; if(!k) return;
+  _predsOpen[k] = !_predsOpen[k];
+  row.classList.toggle("on", _predsOpen[k]);
+  const pn = row.nextElementSibling;
+  if(pn && pn.classList.contains("preds") && pn.dataset.pk===k) pn.classList.toggle("open", _predsOpen[k]);
+});
 iniciar(render);
 </script>
 </body>
