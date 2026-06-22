@@ -18,7 +18,7 @@ DATA = ROOT / "data"
 WEB = ROOT / "web"
 sys.path.insert(0, str(ROOT / "engine"))
 from scoring import puntuar, puntos_partido, REGLAS  # noqa: E402
-from ko_resultados import build_ko  # noqa: E402
+from ko_resultados import build_ko, canonical_bracket  # noqa: E402
 
 MAP = {k: v for k, v in json.loads((DATA / "equipos_map.json").read_text(encoding="utf-8")).items()
        if not k.startswith("_")}
@@ -365,17 +365,28 @@ def build_tablas_grupos(partidos):
     return out
 
 
-def build_timeline(partidos, participantes):
-    """Histórico de puntos: cada X = un partido de grupos jugado (cronológico),
-    Y = puntos acumulados de cada participante."""
+_KO_FASES = ["Dieciseisavos", "Octavos", "Cuartos", "Semifinales", "3er puesto", "Final"]
+_PREV_FASE = {"Dieciseisavos": "Grupos", "Octavos": "Dieciseisavos", "Cuartos": "Octavos",
+              "Semifinales": "Cuartos", "3er puesto": "Semifinales", "Final": "Semifinales"}
+
+
+def _lbl(utc):
+    dt = datetime.fromisoformat(utc.replace("Z", "+00:00")) + timedelta(hours=2)
+    return f"{dt.day}/{dt.month}"
+
+
+def build_timeline(partidos, participantes, res_full, tablas_grupos, posic, bracket):
+    """Histórico de puntos. Fase de grupos: cada X = un partido jugado (puntos de
+    grupos acumulados). Eliminatorias: un hito por partido KO jugado (más uno al
+    cerrar los grupos), con el TOTAL COMPLETO a esa fecha — así entran posiciones,
+    clasificados, cruces y honor a medida que se resuelven."""
     played = [p for p in partidos if p.get("grupo") and p.get("jugado")
               and p.get("golesLocal") is not None and p.get("utc")]
     played.sort(key=lambda p: p["utc"])
     keyseq, labels = [], ["Inicio"]
     for p in played:
         keyseq.append(frozenset((norm(p["local"]), norm(p["visitante"]))))
-        dt = datetime.fromisoformat(p["utc"].replace("Z", "+00:00")) + timedelta(hours=2)
-        labels.append(f"{dt.day}/{dt.month}")
+        labels.append(_lbl(p["utc"]))
     series = {}
     for pid, P in participantes.items():
         ptsby = {frozenset((norm(g["local"]), norm(g["visitante"]))): g["pts"]
@@ -385,11 +396,106 @@ def build_timeline(partidos, participantes):
             cum += ptsby.get(k, 0)
             arr.append(cum)
         series[pid] = arr
+
+    # --- eliminatorias ---
+    ko_played = sorted([p for p in partidos if p.get("fase") in _KO_FASES and p.get("jugado")
+                        and p.get("golesLocal") is not None and p.get("utc")], key=lambda p: p["utc"])
+    if not ko_played:
+        return {"x": labels, "series": series}
+
+    maxutc = {}
+    for p in partidos:
+        f = p.get("fase")
+        if p.get("utc") and (f == "Grupos" or f in _KO_FASES):
+            maxutc[f] = max(maxutc.get(f, ""), p["utc"])
+    thr = {f: maxutc.get(_PREV_FASE[f]) for f in _KO_FASES}
+
+    def mask(T):
+        """Partidos tal como se conocían en la fecha T: oculta resultados de partidos
+        no jugados aún y los equipos de rondas todavía no sorteadas."""
+        out = []
+        for p in partidos:
+            f = p.get("fase")
+            if f not in _KO_FASES:
+                out.append(p); continue
+            q = dict(p)
+            drawn = thr[f] is not None and T >= thr[f]
+            if not drawn:
+                q.update(local=None, visitante=None, jugado=False,
+                         golesLocal=None, golesVisitante=None, ganador=None)
+            elif not (p["utc"] <= T and p.get("jugado") and p.get("golesLocal") is not None):
+                q.update(jugado=False, golesLocal=None, golesVisitante=None, ganador=None)
+            out.append(q)
+        return out
+
+    def res_at(T):
+        ko = build_ko(mask(T), tablas_grupos, PRED, bracket=bracket, posiciones=(posic or None))
+        return {"grupos": res_full["grupos"], **{k: v for k, v in ko.items() if k != "_warnings"}}
+
+    hitos = ([maxutc["Grupos"]] if maxutc.get("Grupos") else []) + [p["utc"] for p in ko_played]
+    for T in hitos:
+        resT = res_at(T)
+        for pid, pred in PRED.items():
+            series[pid].append(puntuar(pred, resT)["total"])
+        labels.append(_lbl(T))
     return {"x": labels, "series": series}
 
 
+# (cruces de predicción, tabla del motor, índice de detalle, clave en res)
+_CRUCES = [("cruces_dieciseisavos", "r32", "cruces_r32"),
+           ("cruces_octavos", "r16", "cruces_r16"),
+           ("cruces_cuartos", "qf", "cruces_qf"),
+           ("cruces_semis", "sf", "cruces_sf")]
+
+
+def _enrich_cruces(pred_list, res_list, tabla):
+    """Añade a cada cruce predicho su resultado real (del slot), puntos y categoría."""
+    out = []
+    for i, c in enumerate(pred_list or []):
+        realc = res_list[i].get("pred") if (res_list and i < len(res_list)) else None
+        pts, tier = puntos_partido(c.get("pred"), realc, tabla)
+        out.append({**c, "real": realc, "pts": pts, "tier": tier})
+    return out
+
+
+def _ko_breakdown(res, det):
+    """Desglose de puntos de eliminatorias por sección, con flag 'started' (si esa
+    sección ya tiene datos reales). Excluye grupos (van aparte) y botas/balones
+    (aún no cableadas)."""
+    def info_ac(cat):
+        return (det.get(cat, {}).get("info") or {}).get("aciertos", 0)
+
+    rows = []
+    rows.append({"label": "Posiciones de grupo", "pts": det["posiciones_grupo"]["puntos"],
+                 "info": f"{info_ac('posiciones_grupo')} aciertos",
+                 "started": bool(res.get("posiciones_grupos"))})
+    RND = [("Dieciseisavos", "clasif_dieciseisavos", "cruces_r32", "clasif_dieciseisavos", "cruces_dieciseisavos"),
+           ("Octavos", "clasif_octavos", "cruces_r16", "clasif_octavos", "cruces_octavos"),
+           ("Cuartos", "clasif_cuartos", "cruces_qf", "clasif_cuartos", "cruces_cuartos"),
+           ("Semifinales", "clasif_semis", "cruces_sf", "clasif_semis", "cruces_semis")]
+    for label, dclas, dcru, rclas, rcru in RND:
+        cp, mp = det[dclas]["puntos"], det[dcru]["puntos"]
+        started = bool(res.get(rclas)) or any(c.get("pred") for c in (res.get(rcru) or []))
+        rows.append({"label": label, "pts": cp + mp,
+                     "info": f"{info_ac(dclas)} clasificados (+{cp}) · marcadores +{mp}", "started": started})
+    rows.append({"label": "Finalistas", "pts": det["clasif_final"]["puntos"],
+                 "info": f"{info_ac('clasif_final')} aciertos", "started": bool(res.get("finalistas"))})
+    rows.append({"label": "Clasif. 3.º y 4.º", "pts": det["clasif_3y4"]["puntos"],
+                 "info": f"{info_ac('clasif_3y4')} aciertos", "started": bool(res.get("clasif_34"))})
+    rows.append({"label": "Partido 3.º-4.º", "pts": det["partido_3y4"]["puntos"], "info": "",
+                 "started": bool((res.get("partido_34") or {}).get("pred"))})
+    rows.append({"label": "Final", "pts": det["partido_final"]["puntos"], "info": "",
+                 "started": bool((res.get("partido_final") or {}).get("pred"))})
+    honor = det["campeon"]["puntos"] + det["subcampeon"]["puntos"] + det["tercero"]["puntos"]
+    rows.append({"label": "Campeón · Subcampeón · 3.º", "pts": honor, "info": "",
+                 "started": bool(res.get("campeon"))})
+    return {"total": sum(r["pts"] for r in rows), "rows": rows,
+            "iniciado": any(r["started"] for r in rows)}
+
+
 def build_participantes(res):
-    """Detalle por participante: pronóstico de cada partido de grupos vs real + puntos."""
+    """Detalle por participante: pronóstico de cada partido de grupos vs real + puntos,
+    más el desglose de eliminatorias (cruces con puntos por slot y resumen por sección)."""
     tabla = REGLAS["partidos"]["grupos"]
     out = {}
     for k, pred in PRED.items():
@@ -400,6 +506,9 @@ def build_participantes(res):
             local, visit = [t.strip() for t in gp["match"].split("-", 1)]
             grupos.append({"code": gp["code"], "local": local, "visitante": visit,
                            "pred": gp.get("pred"), "real": real, "pts": pts, "tier": tier})
+        det = puntuar(pred, res)["detalle"]
+        cruces = {pk: _enrich_cruces(pred.get(pk), res.get(pk), REGLAS["partidos"][tk])
+                  for pk, tk, _ in _CRUCES}
         out[k] = {
             "id": k, "nombre": display_name(k),
             "campeon": pred.get("campeon"), "subcampeon": pred.get("subcampeon"),
@@ -410,11 +519,12 @@ def build_participantes(res):
             "finalistas": pred.get("finalistas"), "clasif_semis": pred.get("clasif_semis"),
             "clasif_cuartos": pred.get("clasif_cuartos"), "clasif_octavos": pred.get("clasif_octavos"),
             "clasif_dieciseisavos": pred.get("clasif_dieciseisavos"),
-            "cruces_dieciseisavos": pred.get("cruces_dieciseisavos"),
-            "cruces_octavos": pred.get("cruces_octavos"),
-            "cruces_cuartos": pred.get("cruces_cuartos"),
-            "cruces_semis": pred.get("cruces_semis"),
+            "cruces_dieciseisavos": cruces["cruces_dieciseisavos"],
+            "cruces_octavos": cruces["cruces_octavos"],
+            "cruces_cuartos": cruces["cruces_cuartos"],
+            "cruces_semis": cruces["cruces_semis"],
             "partido_34": pred.get("partido_34"), "partido_final": pred.get("partido_final"),
+            "ko": _ko_breakdown(res, det),
             "grupos": grupos,
         }
     return out
@@ -434,9 +544,10 @@ def main():
     # Eliminatorias: alimenta el motor con los resultados reales de KO (posiciones,
     # clasificados, cruces, honor). Protegido: si algo falla, se mantiene la fase de
     # grupos y la web sigue funcionando.
+    bracket, posic = canonical_bracket(PRED), []
     try:
         posic = build_posiciones_oficiales(fetch_standings(), partidos)
-        ko = build_ko(partidos, tablas_grupos, PRED, posiciones=(posic or None))
+        ko = build_ko(partidos, tablas_grupos, PRED, bracket=bracket, posiciones=(posic or None))
         for w in ko.pop("_warnings", []):
             print(f"  [KO aviso] {w}")
         res.update(ko)
@@ -446,7 +557,7 @@ def main():
     ranking = build_ranking(res)
     participantes = build_participantes(res)
     goleadores = build_goleadores(fetch_scorers(), build_tla_map(matches))
-    timeline = build_timeline(partidos, participantes)
+    timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic, bracket)
     _lid = [f["nombre"] for f in ranking if f["pos"] == 1]
 
     data = {

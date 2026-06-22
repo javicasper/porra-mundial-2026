@@ -33,15 +33,19 @@ function badge(x){
   const c = x.tier==="exacto"?"b5":x.tier==="diferencia"?"b2":x.tier==="signo"?"b1":"b0";
   return `<div class="bdg ${c}">${x.pts?"+"+x.pts:"0"}</div>`;
 }
+const TIERC = t => t==="exacto"?"b5":t==="diferencia"?"b2":t==="signo"?"b1":"b0";
 function tieBox(t){
   const row=(team,sc,w)=>`<div class="bx-row ${w?'w':''}"><span class="fl">${fl(team)}</span><span class="bx-nm">${team||"—"}</span><span class="bx-sc">${sc!=null?sc:""}</span></div>`;
-  return `<div class="bx-tie">${row(t.a,t.sa,t.wa)}${row(t.b,t.sb,t.wb)}</div>`;
+  // si el slot real ya se jugó, pie con los puntos de ese cruce (puntuación por slot del cuadro)
+  const TLBL = {exacto:"clavado", diferencia:"diferencia", signo:"signo"};
+  const pt = (t.real!=null) ? `<div class="bx-pts ${TIERC(t.tier)}">${t.pts>0?"+"+t.pts+" "+(TLBL[t.tier]||""):"0 pts"}</div>` : "";
+  return `<div class="bx-tie">${row(t.a,t.sa,t.wa)}${row(t.b,t.sb,t.wb)}${pt}</div>`;
 }
 function normTie(c, adv){
-  if(!c || !c.match) return {a:"",b:"",sa:null,sb:null,wa:false,wb:false};
+  if(!c || !c.match) return {a:"",b:"",sa:null,sb:null,wa:false,wb:false,real:null};
   const [a,b] = c.match.split("-").map(s=>s.trim());
   const p = c.pred||{};
-  return {a,b,sa:p.home,sb:p.away,wa:adv.has(a),wb:adv.has(b)};
+  return {a,b,sa:p.home,sb:p.away,wa:adv.has(a),wb:adv.has(b),pts:c.pts,tier:c.tier,real:c.real};
 }
 const EMPTY_TIE={a:"",b:"",sa:null,sb:null,wa:false,wb:false};
 function bracketHTML(P){
@@ -87,6 +91,15 @@ function prRow(g){
     : `<div class="rl pend">por jugar</div><div class="bdg bx"></div>`;
   return `<div class="pr"><div class="mm"><span class="fl">${fl(g.local)}</span><span class="sc">${sc}</span><span class="fl">${fl(g.visitante)}</span></div>${right}</div>`;
 }
+function koBreakdown(P){
+  const ko = P.ko;
+  if(!ko || !ko.iniciado) return "";
+  const rows = ko.rows.filter(r=>r.started).map(r=>
+    `<div class="kor"><div class="kol">${r.label}${r.info?`<span class="koi">${r.info}</span>`:""}</div>
+       <span class="kop ${r.pts>0?'on':''}">${r.pts>0?"+"+r.pts:"0"}</span></div>`).join("");
+  return `<div class="sec" style="margin:20px 2px 6px">Desglose de eliminatorias <span class="hint">+${ko.total} pts</span></div>
+    <div class="kobox">${rows}</div>`;
+}
 function detalle(P, d){
   const jug = P.grupos.filter(g=>g.real);
   const pts = jug.reduce((a,g)=>a+g.pts,0);
@@ -109,6 +122,7 @@ function detalle(P, d){
   return `${picks}
     <div class="sec" style="margin:18px 2px 8px">Su cuadro de eliminatorias <span class="hint">desliza →</span></div>
     ${bracketHTML(P)}
+    ${koBreakdown(P)}
     <div class="sec" style="margin:20px 2px 6px">Sus pronósticos de grupos
       <span class="hint">${jug.length}/72 jugados · +${pts} pts</span></div>
     ${grp}`;

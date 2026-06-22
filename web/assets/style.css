@@ -207,6 +207,18 @@ a{color:inherit;text-decoration:none}
 .bchip .fl{font-size:1rem}
 .bchip.gold{background:var(--lead-bg);border-color:#e7d8a6}
 
+/* desglose de eliminatorias (ficha) */
+.kobox{border:1px solid var(--hair);border-radius:12px;overflow:hidden;background:var(--card);box-shadow:var(--shadow)}
+.kor{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:10px 13px;border-top:1px solid var(--hair)}
+.kor:first-child{border-top:none}
+.kol{font-weight:600;font-size:.88rem;min-width:0}
+.kol .koi{display:block;font-weight:400;font-size:.72rem;color:var(--mut);margin-top:1px}
+.kop{font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;color:var(--mut2)}
+.kop.on{color:var(--accent)}
+/* puntos por cruce en el cuadro */
+.bx-pts{font-size:.6rem;font-weight:800;text-align:center;padding:3px 4px;border-top:1px solid var(--hair);
+  font-variant-numeric:tabular-nums;letter-spacing:.01em}
+
 /* cuadro de torneo (árbol con líneas, dos lados) */
 .bkwrap{overflow:auto;-webkit-overflow-scrolling:touch;padding:6px 0 2px}
 .bktree{display:flex;align-items:center;width:max-content;margin:0 auto;--arm:13px;--seg:26px;--gap:12px}
