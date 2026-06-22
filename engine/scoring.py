@@ -75,13 +75,47 @@ def rank_de_pos(pos_label):
     return None
 
 
+def _equipos(match):
+    """'EquipoA-EquipoB' -> [normA, normB] (None si no parseable)."""
+    if not match:
+        return None
+    parts = [norm(t) for t in match.split("-", 1)]
+    return parts if len(parts) == 2 and all(parts) else None
+
+
+def buscar_cruce(pred_match, real_list):
+    """Marcador real de un cruce de eliminatoria, casado POR EQUIPOS (regla de la
+    porra, confirmada en el Excel/oficial): busca en `real_list` (los partidos
+    REALES de esa ronda) el que enfrenta a la MISMA pareja que `pred_match`, en
+    CUALQUIER orden y sin importar la posición/fila. Devuelve el marcador real
+    orientado al local del pronóstico, o None si ese enfrentamiento no existe
+    ("si un partido no existe no suma puntos")."""
+    te = _equipos(pred_match)
+    if not te:
+        return None
+    ph, pa = te
+    for b in real_list or []:
+        rp = b.get("pred")
+        if not rp:
+            continue
+        rl, rv = norm(b.get("local")), norm(b.get("visitante"))
+        if {rl, rv} != {ph, pa}:
+            continue
+        if rl == ph:                      # mismo orden que el pronóstico
+            return {"sign": rp["sign"], "home": rp["home"], "away": rp["away"]}
+        # equipos invertidos respecto al pronóstico: giramos el marcador
+        return {"sign": {"1": "2", "2": "1"}.get(rp["sign"], "X"),
+                "home": rp["away"], "away": rp["home"]}
+    return None
+
+
 # ---------- motor principal ----------
-def puntuar(pred, res, *, eliminatorias_por="slot"):
+def puntuar(pred, res):
     """Puntua una prediccion contra unos resultados (posiblemente parciales).
 
-    eliminatorias_por: 'slot' compara el marcador del cruce por posicion en el
-    cuadro (slot i vs slot i). 'equipos' solo puntua si el emparejamiento real
-    coincide en equipos. (Decision de diseno pendiente de confirmar.)
+    Marcadores de eliminatorias: POR EQUIPOS. Un cruce pronosticado puntua su
+    marcador solo si esa pareja de equipos se enfrenta de verdad en esa ronda
+    (en cualquier orden y posicion); si no, 0. Los 'clasificados' van aparte.
     Devuelve dict con desglose y total.
     """
     R = REGLAS
@@ -122,23 +156,16 @@ def puntuar(pred, res, *, eliminatorias_por="slot"):
         ac = aciertos_lista(pred.get(clasif_key), res.get(clasif_key))
         ppt = len(ac) * R["clasificados"][clasif_pts_key]
         add(f"clasif_{clasif_pts_key}", ppt, {"aciertos": len(ac)})
-        # cruces (marcadores)
+        # cruces (marcadores) — POR EQUIPOS: la pareja debe enfrentarse de verdad
         pts = 0; brk = {"exacto": 0, "diferencia": 0, "signo": 0}
-        pc = pred.get(cruces_key, []); rc = res.get(cruces_key, [])
-        if eliminatorias_por == "slot":
-            for a, b in zip(pc, rc):
-                if not b.get("pred"): continue
-                p, t = puntos_partido(a.get("pred"), b.get("pred"), R["partidos"][tabla_key])
-                pts += p
-                if t: brk[t] += 1
-        else:  # 'equipos'
-            rmap = {norm(b["match"]): b.get("pred") for b in rc if b.get("match")}
-            for a in pc:
-                rp = rmap.get(norm(a.get("match")))
-                if not rp: continue
-                p, t = puntos_partido(a.get("pred"), rp, R["partidos"][tabla_key])
-                pts += p
-                if t: brk[t] += 1
+        rc = res.get(cruces_key, [])
+        for a in pred.get(cruces_key, []):
+            rp = buscar_cruce(a.get("match"), rc)
+            if not rp:
+                continue
+            p, t = puntos_partido(a.get("pred"), rp, R["partidos"][tabla_key])
+            pts += p
+            if t: brk[t] += 1
         add(f"cruces_{tabla_key}", pts, brk)
 
     # 5) Finalistas y 3º/4º (clasificados)

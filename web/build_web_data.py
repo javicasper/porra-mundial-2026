@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 WEB = ROOT / "web"
 sys.path.insert(0, str(ROOT / "engine"))
-from scoring import puntuar, puntos_partido, REGLAS  # noqa: E402
-from ko_resultados import build_ko, canonical_bracket  # noqa: E402
+from scoring import puntuar, puntos_partido, buscar_cruce, REGLAS  # noqa: E402
+from ko_resultados import build_ko  # noqa: E402
 
 MAP = {k: v for k, v in json.loads((DATA / "equipos_map.json").read_text(encoding="utf-8")).items()
        if not k.startswith("_")}
@@ -375,7 +375,7 @@ def _lbl(utc):
     return f"{dt.day}/{dt.month}"
 
 
-def build_timeline(partidos, participantes, res_full, tablas_grupos, posic, bracket):
+def build_timeline(partidos, participantes, res_full, tablas_grupos, posic):
     """Histórico de puntos. Fase de grupos: cada X = un partido jugado (puntos de
     grupos acumulados). Eliminatorias: un hito por partido KO jugado (más uno al
     cerrar los grupos), con el TOTAL COMPLETO a esa fecha — así entran posiciones,
@@ -429,8 +429,8 @@ def build_timeline(partidos, participantes, res_full, tablas_grupos, posic, brac
         return out
 
     def res_at(T):
-        ko = build_ko(mask(T), tablas_grupos, PRED, bracket=bracket, posiciones=(posic or None))
-        return {"grupos": res_full["grupos"], **{k: v for k, v in ko.items() if k != "_warnings"}}
+        ko = build_ko(mask(T), tablas_grupos, posiciones=(posic or None))
+        return {"grupos": res_full["grupos"], **ko}
 
     hitos = ([maxutc["Grupos"]] if maxutc.get("Grupos") else []) + [p["utc"] for p in ko_played]
     for T in hitos:
@@ -448,11 +448,12 @@ _CRUCES = [("cruces_dieciseisavos", "r32", "cruces_r32"),
            ("cruces_semis", "sf", "cruces_sf")]
 
 
-def _enrich_cruces(pred_list, res_list, tabla):
-    """Añade a cada cruce predicho su resultado real (del slot), puntos y categoría."""
+def _enrich_cruces(pred_list, real_list, tabla):
+    """Añade a cada cruce predicho su resultado real (casado POR EQUIPOS, orientado
+    a su pronóstico; None si ese enfrentamiento no existe), puntos y categoría."""
     out = []
-    for i, c in enumerate(pred_list or []):
-        realc = res_list[i].get("pred") if (res_list and i < len(res_list)) else None
+    for c in (pred_list or []):
+        realc = buscar_cruce(c.get("match"), real_list or [])
         pts, tier = puntos_partido(c.get("pred"), realc, tabla)
         out.append({**c, "real": realc, "pts": pts, "tier": tier})
     return out
@@ -544,20 +545,17 @@ def main():
     # Eliminatorias: alimenta el motor con los resultados reales de KO (posiciones,
     # clasificados, cruces, honor). Protegido: si algo falla, se mantiene la fase de
     # grupos y la web sigue funcionando.
-    bracket, posic = canonical_bracket(PRED), []
+    posic = []
     try:
         posic = build_posiciones_oficiales(fetch_standings(), partidos)
-        ko = build_ko(partidos, tablas_grupos, PRED, bracket=bracket, posiciones=(posic or None))
-        for w in ko.pop("_warnings", []):
-            print(f"  [KO aviso] {w}")
-        res.update(ko)
+        res.update(build_ko(partidos, tablas_grupos, posiciones=(posic or None)))
     except Exception as e:  # noqa: BLE001
         print(f"  [KO] omitido por error: {e}")
 
     ranking = build_ranking(res)
     participantes = build_participantes(res)
     goleadores = build_goleadores(fetch_scorers(), build_tla_map(matches))
-    timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic, bracket)
+    timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic)
     _lid = [f["nombre"] for f in ranking if f["pos"] == 1]
 
     data = {
