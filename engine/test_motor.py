@@ -46,3 +46,10 @@ print("  " + "-" * 26)
 for i, (nombre, total, _) in enumerate(tabla, 1):
     marca = "  <- verdad" if nombre == REF else ""
     print(f"  {i:>2} {nombre:<12} {total:>7}{marca}")
+
+# el de referencia (su quiniela usada como verdad) debe quedar 1.o con el maximo
+cross_ok = tabla[0][0] == REF and tabla[0][1] == MAX_TEORICO
+if not (all_ok and cross_ok):
+    print("\nRESULTADO: HAY FALLOS")
+    sys.exit(1)
+print("\nRESULTADO: OK — todos los tests del motor pasan")

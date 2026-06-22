@@ -98,7 +98,13 @@ def buscar_cruce(pred_match, real_list):
         rp = b.get("pred")
         if not rp:
             continue
-        rl, rv = norm(b.get("local")), norm(b.get("visitante"))
+        if b.get("local") and b.get("visitante"):      # formato resultados (build_ko)
+            rl, rv = norm(b.get("local")), norm(b.get("visitante"))
+        else:                                           # formato predicción ({match, pred})
+            te = _equipos(b.get("match"))
+            if not te:
+                continue
+            rl, rv = te
         if {rl, rv} != {ph, pa}:
             continue
         if rl == ph:                      # mismo orden que el pronóstico
