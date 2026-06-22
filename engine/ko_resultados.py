@@ -12,7 +12,62 @@ partidos reales (equipos + marcador), y el casado por equipos lo hace el motor
 equipo). Todo degrada con elegancia: lo que aún no se conoce queda a [] / None.
 """
 from __future__ import annotations
+import json
 import unicodedata
+from pathlib import Path
+
+# Tabla oficial FIFA de reparto de los 8 mejores terceros (extraída del Excel):
+# combinación (8 letras de grupo cuyos terceros clasifican) -> {casilla: grupo del tercero}.
+# La "casilla" es el grupo del 1.º que juega ese cruce (A,B,D,E,G,I,K,L).
+_TERCEROS = json.loads((Path(__file__).resolve().parent.parent / "data" / "terceros_combinaciones.json").read_text(encoding="utf-8"))
+
+# Dieciseisavos: winLabel -> (feeder1, feeder2, utc). Feeders: "1X"/"2X" (posición de
+# grupo) o "3XXXXX" (mejor tercero entre esos grupos). utc = el del calendario real.
+_R32 = {
+    "W73": ("2A", "2B", "2026-06-28T19:00:00Z"), "W74": ("1F", "2C", "2026-06-29T20:30:00Z"),
+    "W75": ("1C", "2F", "2026-06-30T01:00:00Z"), "W76": ("1E", "3ABCDF", "2026-06-29T17:00:00Z"),
+    "W77": ("2E", "2I", "2026-06-30T21:00:00Z"), "W78": ("1I", "3CDFGH", "2026-06-30T17:00:00Z"),
+    "W79": ("1A", "3CEFHI", "2026-07-01T01:00:00Z"), "W80": ("1L", "3EHIJK", "2026-07-01T16:00:00Z"),
+    "W81": ("1G", "3AEHIJ", "2026-07-02T00:00:00Z"), "W82": ("1D", "3BEFIJ", "2026-07-01T20:00:00Z"),
+    "W83": ("1H", "2J", "2026-07-02T23:00:00Z"), "W84": ("2K", "2L", "2026-07-02T19:00:00Z"),
+    "W85": ("1B", "3EFGIJ", "2026-07-03T03:00:00Z"), "W86": ("1K", "3DEIJL", "2026-07-03T22:00:00Z"),
+    "W87": ("2D", "2G", "2026-07-04T01:30:00Z"), "W88": ("1J", "2H", "2026-07-03T18:00:00Z"),
+}
+
+
+def _pos_grupo(tablas, pos, g):
+    for f in (tablas.get(g) or []):
+        if f.get("pos") == pos:
+            return f.get("team")
+    return None
+
+
+def proyeccion_cuadro(tablas_grupos):
+    """Proyección PROVISIONAL de los dieciseisavos según la clasificación actual:
+    1.º/2.º de cada grupo en su casilla fija + los 8 mejores terceros repartidos por
+    la tabla oficial FIFA. Devuelve {utc: {"local","visitante"}} (hasta 16 partidos),
+    o {} si aún no hay datos suficientes (faltan grupos)."""
+    tablas_grupos = tablas_grupos or {}
+    thirds = [(g, next((f for f in filas if f.get("pos") == 3), None)) for g, filas in tablas_grupos.items()]
+    thirds = [(g, f) for g, f in thirds if f]
+    if len(thirds) < 12:
+        return {}
+    thirds.sort(key=lambda gf: (-gf[1].get("pts", 0), -gf[1].get("dg", 0), -gf[1].get("gf", 0), gf[1].get("team", "")))
+    alloc = _TERCEROS.get("".join(sorted(g for g, _ in thirds[:8])))
+    if not alloc:
+        return {}
+
+    def equipo(f, otro):
+        if f[0] in "12":
+            return _pos_grupo(tablas_grupos, int(f[0]), f[1])
+        return _pos_grupo(tablas_grupos, 3, alloc.get(otro[1]))   # tercero asignado a la casilla del 1.º
+
+    out = {}
+    for f1, f2, utc in _R32.values():
+        local, visit = equipo(f1, f2), equipo(f2, f1)
+        if local and visit:
+            out[utc] = {"local": local, "visitante": visit}
+    return out
 
 
 def _norm(s):

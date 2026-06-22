@@ -18,7 +18,7 @@ DATA = ROOT / "data"
 WEB = ROOT / "web"
 sys.path.insert(0, str(ROOT / "engine"))
 from scoring import puntuar, puntos_partido, buscar_cruce, REGLAS  # noqa: E402
-from ko_resultados import build_ko  # noqa: E402
+from ko_resultados import build_ko, proyeccion_cuadro  # noqa: E402
 
 MAP = {k: v for k, v in json.loads((DATA / "equipos_map.json").read_text(encoding="utf-8")).items()
        if not k.startswith("_")}
@@ -556,6 +556,10 @@ def main():
     participantes = build_participantes(res)
     goleadores = build_goleadores(fetch_scorers(), build_tla_map(matches))
     timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic)
+    try:
+        proyeccion = proyeccion_cuadro(tablas_grupos)
+    except Exception as e:  # noqa: BLE001
+        print(f"  [proyección] omitida por error: {e}"); proyeccion = {}
     _lid = [f["nombre"] for f in ranking if f["pos"] == 1]
 
     data = {
@@ -570,6 +574,7 @@ def main():
         "tablas_grupos": tablas_grupos,
         "goleadores": goleadores,
         "timeline": timeline,
+        "proyeccion": proyeccion,
     }
     WEB.mkdir(exist_ok=True)
     (WEB / "data.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

@@ -57,23 +57,72 @@ function grupos(d){
     <div class="ggrid">${cards}</div>`;
 }
 
-/* --- cuadro de cruces --- */
+/* --- cuadro de cruces (árbol oficial 2026, mismo layout que la ficha) --- */
+/* Estructura fija del cuadro: winLabel -> [feeder1, feeder2, utc]. Los feeders
+   son posición de grupo (R32) o "W##"/"L##" (ganador/perdedor de ese partido).
+   Los utc coinciden con los de la API, así que cada casilla casa con su partido
+   real por la hora de inicio. */
+const BR = {
+  W73:["2A","2B","2026-06-28T19:00:00Z"], W74:["1F","2C","2026-06-29T20:30:00Z"],
+  W75:["1C","2F","2026-06-30T01:00:00Z"], W76:["1E","3ABCDF","2026-06-29T17:00:00Z"],
+  W77:["2E","2I","2026-06-30T21:00:00Z"], W78:["1I","3CDFGH","2026-06-30T17:00:00Z"],
+  W79:["1A","3CEFHI","2026-07-01T01:00:00Z"], W80:["1L","3EHIJK","2026-07-01T16:00:00Z"],
+  W81:["1G","3AEHIJ","2026-07-02T00:00:00Z"], W82:["1D","3BEFIJ","2026-07-01T20:00:00Z"],
+  W83:["1H","2J","2026-07-02T23:00:00Z"], W84:["2K","2L","2026-07-02T19:00:00Z"],
+  W85:["1B","3EFGIJ","2026-07-03T03:00:00Z"], W86:["1K","3DEIJL","2026-07-03T22:00:00Z"],
+  W87:["2D","2G","2026-07-04T01:30:00Z"], W88:["1J","2H","2026-07-03T18:00:00Z"],
+  W89:["W73","W75","2026-07-04T21:00:00Z"], W90:["W74","W77","2026-07-04T17:00:00Z"],
+  W91:["W76","W78","2026-07-05T20:00:00Z"], W92:["W79","W80","2026-07-06T00:00:00Z"],
+  W93:["W83","W84","2026-07-06T19:00:00Z"], W94:["W81","W82","2026-07-07T00:00:00Z"],
+  W95:["W86","W88","2026-07-07T16:00:00Z"], W96:["W85","W87","2026-07-07T20:00:00Z"],
+  W97:["W89","W90","2026-07-09T20:00:00Z"], W98:["W93","W94","2026-07-10T19:00:00Z"],
+  W99:["W91","W92","2026-07-11T21:00:00Z"], W100:["W95","W96","2026-07-12T01:00:00Z"],
+  W101:["W97","W98","2026-07-14T19:00:00Z"], W102:["W99","W100","2026-07-15T19:00:00Z"],
+  W103:["L101","L102","2026-07-18T21:00:00Z"], W104:["W101","W102","2026-07-19T19:00:00Z"],
+};
+function flbl(f){            // etiqueta legible de un feeder cuando aún no hay equipo
+  if(!f) return "Por definir";
+  if(f[0]==="W") return "Ganador "+f.slice(1);
+  if(f[0]==="L") return "Perdedor "+f.slice(1);
+  const g=f.slice(1);
+  return f[0]+".º "+(g.length===1?g:"("+g+")");
+}
+function crBox(win, putc, proy){
+  const n=BR[win]; const real=putc[(n[2])]; const pj=proy&&proy[n[2]];
+  const row=(name,g,w,team)=>`<div class="bx-row ${w?'w':''}"><span class="fl">${team?fl(team):""}</span><span class="bx-nm">${name}</span><span class="bx-sc">${g!=null?g:""}</span></div>`;
+  let r1,r2,foot,cls="";
+  if(real && real.local){                       // equipos reales ya conocidos
+    const show=real.jugado||real.envivo;
+    const hw=real.jugado&&real.golesLocal>real.golesVisitante, aw=real.jugado&&real.golesVisitante>real.golesLocal;
+    r1=row(real.local, show?real.golesLocal:null, hw, real.local);
+    r2=row(real.visitante, show?real.golesVisitante:null, aw, real.visitante);
+    foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${hora(n[2])}</div>`);
+  }else if(pj){                                  // proyección provisional (según clasificación actual)
+    cls=" prov";
+    r1=row(pj.local,null,false,pj.local);
+    r2=row(pj.visitante,null,false,pj.visitante);
+    foot=`<div class="bx-t prov">proyección · ${hora(n[2])}</div>`;
+  }else{                                         // esqueleto: feeders + hora
+    r1=row(flbl(n[0]),null,false,null);
+    r2=row(flbl(n[1]),null,false,null);
+    foot=`<div class="bx-t">${hora(n[2])}</div>`;
+  }
+  return `<div class="bx-tie${cls}">${r1}${r2}${foot}</div>`;
+}
 function cruces(d){
-  const byR = {}; RONDAS.forEach(r=>byR[r]=[]);
-  d.partidos.forEach(p=>{ if(byR[p.fase]) byR[p.fase].push(p); });
-  const lado = (t,g,win)=>`<div class="s ${win?'w':''}"><span class="fl">${fl(t)}</span>${t||"Por definir"}${g!=null?`<span class="g">${g}</span>`:""}</div>`;
-  const cols = RONDAS.filter(r=>byR[r].length).map(r=>{
-    const ties = byR[r].sort((a,b)=>(a.utc||"")> (b.utc||"")?1:-1).map(p=>{
-      const hw = p.jugado && p.golesLocal>p.golesVisitante, aw = p.jugado && p.golesVisitante>p.golesLocal;
-      return `<div class="tie">
-        ${lado(p.local,p.jugado?p.golesLocal:null,hw)}
-        <div class="vs">${p.jugado?"":hora(p.utc)}</div>
-        ${lado(p.visitante,p.jugado?p.golesVisitante:null,aw)}</div>`;
-    }).join("");
-    return `<div class="brd-round"><h4>${r}</h4>${ties}</div>`;
-  }).join("");
-  return `<div class="sec">Cuadro de cruces</div>
-    <div class="bracket">${cols||'<div style="color:var(--mut)">Aún por definir.</div>'}</div>`;
+  const proy=d.proyeccion||{};
+  const putc={}; d.partidos.forEach(p=>{ if(p.fase!=="Grupos"&&p.utc) putc[p.utc]=p; });
+  const node=w=>{ const n=BR[w]; const kids=[n[0],n[1]].filter(f=>BR[f]); return {w, kids:kids.length?kids.map(node):null}; };
+  const rn=(x,side)=>`<div class="bnode ${side}"><div class="bself">${crBox(x.w,putc,proy)}</div>${x.kids?`<div class="bkids">${x.kids.map(k=>rn(k,side)).join("")}</div>`:""}</div>`;
+  const banner = Object.keys(proy).length
+    ? `<div class="provbar"><b>Proyección provisional</b> de los dieciseisavos según la clasificación actual (1.º y 2.º de cada grupo + los 8 mejores terceros). Cambia con cada resultado y se fija al terminar los grupos.</div>` : "";
+  return `<div class="sec">Cuadro de cruces <span class="hint">desliza →</span></div>${banner}
+    <div class="bkwrap"><div class="bktree">
+      ${rn(node("W101"),"left")}
+      <div class="bkfinal"><div class="bkfl">Final</div>${crBox("W104",putc,proy)}
+        <div class="bkfl" style="margin-top:8px">3.º y 4.º</div>${crBox("W103",putc,proy)}</div>
+      ${rn(node("W102"),"right")}
+    </div></div>`;
 }
 
 /* --- resultados / calendario --- */
