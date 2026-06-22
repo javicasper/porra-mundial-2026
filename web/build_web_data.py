@@ -18,6 +18,7 @@ DATA = ROOT / "data"
 WEB = ROOT / "web"
 sys.path.insert(0, str(ROOT / "engine"))
 from scoring import puntuar, puntos_partido, REGLAS  # noqa: E402
+from ko_resultados import build_ko  # noqa: E402
 
 MAP = {k: v for k, v in json.loads((DATA / "equipos_map.json").read_text(encoding="utf-8")).items()
        if not k.startswith("_")}
@@ -70,6 +71,7 @@ def build_partidos(matches):
         fin = m["status"] == "FINISHED"
         live = m["status"] in ("IN_PLAY", "PAUSED")
         show = fin or live
+        win = {"HOME_TEAM": "local", "AWAY_TEAM": "visitante"}.get((m.get("score") or {}).get("winner"))
         out.append({
             "fase": STAGE_ES.get(m["stage"], m["stage"]),
             "grupo": (m.get("group") or "").replace("GROUP_", ""),
@@ -82,6 +84,7 @@ def build_partidos(matches):
             "status": m["status"],
             "jugado": fin,
             "envivo": live,
+            "ganador": win if fin else None,   # 'local'/'visitante' (resuelto incl. penaltis)
             "minuto": None,
             "eventos": None,
             "stats": None,
@@ -255,6 +258,44 @@ def build_tla_map(matches):
     return m
 
 
+def fetch_standings():
+    """Clasificación OFICIAL de grupos (con desempates correctos). Best-effort: [] si falla."""
+    key = os.environ.get("FOOTBALLDATA_API_KEY")
+    if not key:
+        return []
+    try:
+        req = urllib.request.Request(
+            "https://api.football-data.org/v4/competitions/WC/standings",
+            headers={"X-Auth-Token": key})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return json.loads(r.read().decode()).get("standings", [])
+    except Exception:
+        return []
+
+
+def build_posiciones_oficiales(standings, partidos):
+    """Posiciones de grupo OFICIALES (de /standings) solo para grupos COMPLETOS
+    (6 partidos finalizados). Devuelve [{"pos": "1º GRUPO A", "team": <ES>}]."""
+    completos = set()
+    cnt = {}
+    for p in partidos:
+        if p.get("fase") == "Grupos" and p.get("jugado") and p.get("golesLocal") is not None and p.get("grupo"):
+            cnt[p["grupo"]] = cnt.get(p["grupo"], 0) + 1
+    completos = {g for g, n in cnt.items() if n >= 6}
+    out = []
+    for bloque in standings:
+        if bloque.get("type") != "TOTAL":
+            continue
+        g = (bloque.get("group") or "").replace("Group ", "").strip()
+        if not g or g not in completos:
+            continue
+        for fila in bloque.get("table", []):
+            name = (fila.get("team") or {}).get("name")
+            if name and fila.get("position"):
+                out.append({"pos": f"{fila['position']}º GRUPO {g}", "team": es(name)})
+    return out
+
+
 def fetch_scorers():
     """Goleadores (best-effort: [] si no hay clave o falla)."""
     key = os.environ.get("FOOTBALLDATA_API_KEY")
@@ -388,9 +429,22 @@ def main():
 
     partidos = overlay_espn(build_partidos(matches), fetch_espn())
     res, jug = build_resultados(partidos)
+    tablas_grupos = build_tablas_grupos(partidos)
+
+    # Eliminatorias: alimenta el motor con los resultados reales de KO (posiciones,
+    # clasificados, cruces, honor). Protegido: si algo falla, se mantiene la fase de
+    # grupos y la web sigue funcionando.
+    try:
+        posic = build_posiciones_oficiales(fetch_standings(), partidos)
+        ko = build_ko(partidos, tablas_grupos, PRED, posiciones=(posic or None))
+        for w in ko.pop("_warnings", []):
+            print(f"  [KO aviso] {w}")
+        res.update(ko)
+    except Exception as e:  # noqa: BLE001
+        print(f"  [KO] omitido por error: {e}")
+
     ranking = build_ranking(res)
     participantes = build_participantes(res)
-    tablas_grupos = build_tablas_grupos(partidos)
     goleadores = build_goleadores(fetch_scorers(), build_tla_map(matches))
     timeline = build_timeline(partidos, participantes)
     _lid = [f["nombre"] for f in ranking if f["pos"] == 1]
