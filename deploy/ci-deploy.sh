@@ -26,7 +26,9 @@ fi
 
 # Recomponer solo si cambió la infraestructura
 if git diff --name-only "$old" "$new" | grep -qE '^(docker-compose\.yml|deploy/)'; then
-  log "infra cambiada -> docker compose up -d"
-  docker compose -f "$REPO/docker-compose.yml" up -d >>"$LOG" 2>&1
+  # --force-recreate: los mounts de fichero suelto (nginx.conf) no se refrescan
+  # con un 'up -d' normal tras git reset (cambia el inodo); recrear sí los re-monta.
+  log "infra cambiada -> docker compose up -d --force-recreate"
+  docker compose -f "$REPO/docker-compose.yml" up -d --force-recreate >>"$LOG" 2>&1
 fi
 log "OK desplegado $(git rev-parse --short HEAD)"
