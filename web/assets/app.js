@@ -41,6 +41,9 @@ const diaLbl = u => u ? cap(new Date(u).toLocaleDateString("es-ES", { ...MAD, we
 const _norm = s => (s||"").normalize("NFKD").replace(/[\u0300-\u036f]/g,"").trim().toLowerCase();
 // Clave de partido independiente del orden local/visitante.
 const pkey = (a,b) => [_norm(a),_norm(b)].sort().join("|");
+// Clave de partido para el DIRECTO: hora + código FIFA del local. Desambigua los
+// partidos que se juegan a la misma hora (si no, el 2.º cogía los datos del 1.º).
+const liveKey = p => (p.utc||"").slice(0,16) + "|" + (p.tlaLocal||"");
 
 // Minuto EN VIVO estimado desde el inicio (la API gratis no da el minuto real).
 // IN_PLAY -> minuto aproximado; PAUSED -> "Descanso".
@@ -131,7 +134,8 @@ async function _espnLive() {
       const colores = [_teamColor(h.team), _teamColor(a.team)];
       const ty = e.status.type;
       const clock = (ty.name === "STATUS_HALFTIME" || ty.shortDetail === "HT") ? "Descanso" : e.status.displayClock;
-      out[(e.date || "").slice(0, 16)] = { state: ty.state, clock, gl: h && h.score, gv: a && a.score, events, stats: hayStats ? stats : null, colores };
+      const habbr = (h && h.team && h.team.abbreviation) || "";
+      out[(e.date || "").slice(0, 16) + "|" + habbr] = { state: ty.state, clock, gl: h && h.score, gv: a && a.score, events, stats: hayStats ? stats : null, colores };
     }
     return out;
   } catch (e) { return {}; }
@@ -194,7 +198,7 @@ function livePanel(key, eventos, stats, colores) {
 }
 // compat: el render de las páginas llama a esto por cada partido en vivo
 function evlistHTML(p) {
-  return livePanel((p.utc || "").slice(0, 16), p.eventos, p.stats, p.colores);
+  return livePanel(liveKey(p), p.eventos, p.stats, p.colores);
 }
 
 async function _pollLive() {
@@ -234,7 +238,7 @@ document.addEventListener("click", ev => {
   const key = b.dataset.key;
   _panelOpen[key] = !_panelOpen[key];
   const panel = document.querySelector(`.livepanel[data-key="${key}"]`);
-  const p = _data && (_data.partidos || []).find(x => (x.utc || "").slice(0, 16) === key);
+  const p = _data && (_data.partidos || []).find(x => liveKey(x) === key);
   if (panel && p) panel.innerHTML = livePanelInner(key, p.eventos, p.stats, p.colores);
 });
 function liveEngine() {

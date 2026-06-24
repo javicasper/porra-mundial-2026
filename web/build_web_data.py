@@ -79,6 +79,8 @@ def build_partidos(matches):
             "utc": m.get("utcDate"),
             "local": es(m["homeTeam"]["name"]) if m["homeTeam"].get("name") else None,
             "visitante": es(m["awayTeam"]["name"]) if m["awayTeam"].get("name") else None,
+            "tlaLocal": m["homeTeam"].get("tla"),       # código FIFA (ESP, BRA...) para casar el directo
+            "tlaVisitante": m["awayTeam"].get("tla"),
             "golesLocal": ft.get("home") if show else None,
             "golesVisitante": ft.get("away") if show else None,
             "status": m["status"],
@@ -162,7 +164,9 @@ def fetch_espn():
             if ty.get("name") == "STATUS_HALFTIME" or ty.get("shortDetail") == "HT":
                 clock = "Descanso"
 
-            out.append({"key": (e.get("date") or "")[:16],
+            # clave = hora + código FIFA del local: desambigua partidos simultáneos
+            habbr = (h.get("team") or {}).get("abbreviation") or ""
+            out.append({"key": (e.get("date") or "")[:16] + "|" + habbr,
                         "state": ty["state"],          # pre | in | post
                         "clock": clock,
                         "home": sc(h), "away": sc(a), "eventos": eventos, "stats": stats, "colores": colores})
@@ -176,7 +180,7 @@ def overlay_espn(partidos, espn):
     vivo, y también marca FINALIZADO en cuanto ESPN lo da por terminado."""
     by_key = {e["key"]: e for e in espn if e.get("key")}
     for p in partidos:
-        e = by_key.get((p.get("utc") or "")[:16])
+        e = by_key.get((p.get("utc") or "")[:16] + "|" + (p.get("tlaLocal") or ""))
         if not e:
             continue
         if e["state"] == "in":
