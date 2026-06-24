@@ -153,13 +153,23 @@ def build_ko(partidos, tablas_grupos, posiciones=None):
             for fila in tablas_grupos[g]:
                 res["posiciones_grupos"].append({"pos": f"{fila['pos']}º GRUPO {g}", "team": fila["team"]})
 
-    # 2) Clasificados por ronda (equipos presentes) + finalistas / 3º-4º
-    res["clasif_dieciseisavos"] = _equipos_en(fases["Dieciseisavos"])
-    res["clasif_octavos"] = _equipos_en(fases["Octavos"])
-    res["clasif_cuartos"] = _equipos_en(fases["Cuartos"])
-    res["clasif_semis"] = _equipos_en(fases["Semifinales"])
-    res["finalistas"] = _equipos_en(fases["Final"])
-    res["clasif_34"] = _equipos_en(fases["3er puesto"])
+    # 2) Clasificados por ronda. "Equipo clasificado a X" solo se conoce de verdad
+    #    cuando la ronda ANTERIOR ha terminado por completo. Si no se espera, la API
+    #    va asignando equipos a medida que se cierran grupos/cruces sueltos y los
+    #    puntos aparecerían/desaparecerían antes de tiempo ("bailando").
+    def _fin(lst):
+        return sum(1 for p in lst if _jugado(p))
+    grupos_ok = sum(1 for p in partidos if p.get("fase") == "Grupos" and _jugado(p)) >= 72
+    r32_ok = _fin(fases["Dieciseisavos"]) >= 16
+    r16_ok = _fin(fases["Octavos"]) >= 8
+    qf_ok = _fin(fases["Cuartos"]) >= 4
+    sf_ok = _fin(fases["Semifinales"]) >= 2
+    res["clasif_dieciseisavos"] = _equipos_en(fases["Dieciseisavos"]) if grupos_ok else []
+    res["clasif_octavos"] = _equipos_en(fases["Octavos"]) if r32_ok else []
+    res["clasif_cuartos"] = _equipos_en(fases["Cuartos"]) if r16_ok else []
+    res["clasif_semis"] = _equipos_en(fases["Semifinales"]) if qf_ok else []
+    res["finalistas"] = _equipos_en(fases["Final"]) if sf_ok else []
+    res["clasif_34"] = _equipos_en(fases["3er puesto"]) if sf_ok else []
 
     # 3) Marcadores de cruces: lista de partidos reales jugados de cada ronda
     #    (el motor los casa por equipos; aquí no importa el orden de la lista)
