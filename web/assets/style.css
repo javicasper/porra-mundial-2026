@@ -160,6 +160,7 @@ a{color:inherit;text-decoration:none}
 .bx2 .ft{font-size:.54rem;font-weight:700;letter-spacing:.1em;color:var(--mut2);margin-top:1px}
 .bx2 .lv{font-size:.54rem;font-weight:800;color:var(--live);margin-top:1px}
 .mt .win{color:var(--ink);font-weight:700}
+.mt .th.prov,.mt .ta.prov{font-style:italic;color:var(--lead)}  /* equipo de proyección provisional */
 .mt .tag{grid-column:1/-1;text-align:center;margin-top:5px}
 .mt .tag span{font-size:.62rem;color:var(--mut2);font-weight:600;letter-spacing:.03em;text-transform:uppercase}
 .mt.clk{cursor:pointer}
