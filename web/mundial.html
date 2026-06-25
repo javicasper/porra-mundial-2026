@@ -147,11 +147,11 @@ function matchRow(p, withPreds){
   const visProv = proj && !proj.visitanteFijo ? " prov" : "";
   const dudoso = proj && (!proj.localFijo || !proj.visitanteFijo);
   const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : (p.fase + (dudoso?" · proyección":""));
-  const k = pkey(p.local, p.visitante);
-  const has = withPreds && !!(PREDIDX[k] && PREDIDX[k].length);
-  const open = has && !!_predsOpen[k];
+  const pk = withPreds ? panelKeyFor(p) : null;
+  const has = !!pk;
+  const open = has && !!_predsOpen[pk];
   const chev = has ? `<span class="pchev" aria-hidden="true">›</span>` : "";
-  return `<div class="mt${has?' clk':''}${open?' on':''}"${has?` data-pk="${k}"`:""}>
+  return `<div class="mt${has?' clk':''}${open?' on':''}"${has?` data-pk="${pk}"`:""}>
     <div class="th ${wc(p,'h')}${locProv}">${loc}<span class="fl">${fl(loc)}</span></div>
     ${box(p)}
     <div class="ta ${wc(p,'a')}${visProv}"><span class="fl">${fl(vis)}</span>${vis}</div>
@@ -159,19 +159,43 @@ function matchRow(p, withPreds){
 }
 
 /* --- pronósticos por partido (todos los participantes) --- */
-let PREDIDX = {};            // clave partido -> [{nombre, local, visitante, pred, pts, tier}]
+let PREDIDX = {};            // grupos: pkey -> [{nombre, local, visitante, pred, pts, tier}]
+let PKO = {};                // KO: fase -> pkey -> {nombre -> {home,away,hteam,pts,tier}}
+let ALLPART = [];            // nombres de participantes (orden de ranking)
 let PROY = {};               // utc -> {local, visitante}: proyección provisional de dieciseisavos
 const _predsOpen = {};       // clave -> ¿panel desplegado? (sobrevive a re-render)
+const _KORONDAS = [["cruces_dieciseisavos","Dieciseisavos"],["cruces_octavos","Octavos"],
+                   ["cruces_cuartos","Cuartos"],["cruces_semis","Semifinales"]];
 function buildPredIndex(d){
   PROY = d.proyeccion || {};
-  PREDIDX = {};
+  ALLPART = (d.ranking||[]).map(r=>r.nombre);
+  PREDIDX = {}; PKO = {};
   Object.values(d.participantes||{}).forEach(P=>{
     (P.grupos||[]).forEach(g=>{
       const k = pkey(g.local, g.visitante);
       (PREDIDX[k] = PREDIDX[k] || []).push(
         {nombre:P.nombre, local:g.local, visitante:g.visitante, pred:g.pred, pts:g.pts, tier:g.tier});
     });
+    // cruces de KO: indexados por pareja de equipos (cada uno pudo poner equipos distintos)
+    _KORONDAS.forEach(([key,fase])=>{
+      (P[key]||[]).forEach(c=>{
+        if(!c || !c.match) return;
+        const [ta,tb] = c.match.split("-").map(s=>s.trim());
+        const k = pkey(ta, tb);
+        ((PKO[fase] = PKO[fase]||{})[k] = PKO[fase][k]||{})[P.nombre] =
+          {home:c.pred&&c.pred.home, away:c.pred&&c.pred.away, hteam:ta, pts:c.pts, tier:c.tier};
+      });
+    });
   });
+}
+// Clave del panel de pronósticos de un partido (o null si no hay que mostrarlo).
+function panelKeyFor(p){
+  if(p.grupo){ const k=pkey(p.local,p.visitante); return (PREDIDX[k]&&PREDIDX[k].length)?k:null; }
+  if(p.local && p.visitante && PKO[p.fase]){     // cruce KO definido al 100% (ambos equipos reales)
+    const k=pkey(p.local,p.visitante), m=PKO[p.fase][k];
+    return (m && Object.keys(m).length) ? (p.fase+"|"+k) : null;
+  }
+  return null;
 }
 // Puntos provisionales de un partido EN JUEGO (reglas de grupos), calculados en
 // cliente contra el marcador en vivo. Los finalizados ya vienen puntuados del motor.
@@ -184,28 +208,44 @@ function _liveTier(ph, pa, gl, gv){
   return {tier:null, pts:0};
 }
 function predsPanel(p){
-  const k = pkey(p.local, p.visitante);
-  const arr = PREDIDX[k];
-  if(!arr || !arr.length) return "";
-  const TC = {exacto:"b5", diferencia:"b2", signo:"b1"};
-  const rows = arr.map(x=>{
-    // orienta el marcador pronosticado al local/visitante de ESTE partido
-    let h = x.pred && x.pred.home, a = x.pred && x.pred.away;
-    if(x.pred && _norm(x.local) !== _norm(p.local)){ const t=h; h=a; a=t; }
-    let pts=null, tier=null;
-    if(p.jugado){ pts = x.pts; tier = x.tier; }                       // puntuación oficial
-    else if(p.envivo){ const r=_liveTier(h,a,p.golesLocal,p.golesVisitante); pts=r.pts; tier=r.tier; }
-    return {nombre:x.nombre, sc: x.pred ? `${h}-${a}` : "—", pts, tier};
-  });
+  const kk = panelKeyFor(p); if(!kk) return "";
   const visto = p.jugado || p.envivo;
-  rows.sort((a,b)=> visto ? ((b.pts||0)-(a.pts||0)) || a.nombre.localeCompare(b.nombre)
-                          : a.nombre.localeCompare(b.nombre));
+  const ko = !p.grupo;
+  const TC = {exacto:"b5", diferencia:"b2", signo:"b1"};
+  const tierLive = (h,a)=>{ const r=_liveTier(h,a,p.golesLocal,p.golesVisitante); return {pts:r.pts, tier:r.tier}; };
+  let rows;
+  if(!ko){                                  // GRUPOS: todos pronosticaron el mismo partido
+    rows = PREDIDX[pkey(p.local,p.visitante)].map(x=>{
+      let h = x.pred&&x.pred.home, a = x.pred&&x.pred.away;
+      if(x.pred && _norm(x.local) !== _norm(p.local)){ const t=h; h=a; a=t; }
+      let pts=null, tier=null;
+      if(p.jugado){ pts=x.pts; tier=x.tier; } else if(p.envivo){ ({pts,tier}=tierLive(h,a)); }
+      return {nombre:x.nombre, sc:x.pred?`${h}-${a}`:"—", pts, tier, has:true};
+    });
+  } else {                                  // KO: por EQUIPOS; quien no puso este cruce, "—"
+    const byName = PKO[p.fase][pkey(p.local,p.visitante)] || {};
+    rows = ALLPART.map(nombre=>{
+      const e = byName[nombre];
+      if(!e || e.home==null) return {nombre, sc:"—", pts:null, tier:null, has:false};
+      let h=e.home, a=e.away;
+      if(_norm(e.hteam) !== _norm(p.local)){ const t=h; h=a; a=t; }   // orientar al cruce real
+      let pts=null, tier=null;
+      if(p.jugado){ pts=e.pts; tier=e.tier; } else if(p.envivo){ ({pts,tier}=tierLive(h,a)); }
+      return {nombre, sc:`${h}-${a}`, pts, tier, has:true};
+    });
+  }
+  rows.sort((a,b)=>{
+    if(a.has!==b.has) return a.has ? -1 : 1;                          // los que tenían el cruce, arriba
+    if(visto && a.has) return ((b.pts||0)-(a.pts||0)) || a.nombre.localeCompare(b.nombre);
+    return a.nombre.localeCompare(b.nombre);
+  });
   const chips = rows.map(x=>{
-    const bdg = visto ? `<span class="bdg ${TC[x.tier]||'b0'}">${x.pts>0?"+"+x.pts:x.pts}</span>` : "";
-    return `<div class="prc"><span class="pn">${x.nombre}</span><span class="ps">${x.sc}</span>${bdg}</div>`;
+    const bdg = (visto && x.has) ? `<span class="bdg ${TC[x.tier]||'b0'}">${x.pts>0?"+"+x.pts:x.pts}</span>` : "";
+    return `<div class="prc${x.has?'':' nope'}"><span class="pn">${x.nombre}</span><span class="ps">${x.sc}</span>${bdg}</div>`;
   }).join("");
   const leg = visto ? `<div class="prleg">${p.envivo?'<b class="prov">Provisional</b>':''}<span class="bdg b5">5</span>clavado<span class="bdg b2">2</span>dif.<span class="bdg b1">1</span>signo<span class="bdg b0">0</span>fallo</div>` : "";
-  return `<div class="preds${_predsOpen[k]?' open':''}" data-pk="${k}">${leg}<div class="prgrid">${chips}</div></div>`;
+  const note = ko ? `<div class="prnote">${rows.filter(r=>r.has).length}/${ALLPART.length} acertaron el cruce (los demás pusieron otros equipos)</div>` : "";
+  return `<div class="preds${_predsOpen[kk]?' open':''}" data-pk="${kk}">${leg}${note}<div class="prgrid">${chips}</div></div>`;
 }
 function matchBlock(p){ return matchRow(p, true) + predsPanel(p); }
 
