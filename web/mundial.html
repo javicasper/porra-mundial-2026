@@ -91,7 +91,7 @@ function crBox(win, putc, proy){
   const n=BR[win]; const real=putc[(n[2])]; const pj=proy&&proy[n[2]];
   const row=(name,g,w,team,prov)=>`<div class="bx-row ${w?'w':''}${prov?' prov':''}"><span class="fl">${team?fl(team):""}</span><span class="bx-nm">${name}</span><span class="bx-sc">${g!=null?g:""}</span></div>`;
   let r1,r2,foot,cls="";
-  if(real && real.local){                       // equipos reales ya conocidos
+  if(real && real.local && real.visitante){     // equipos reales: SOLO si están los dos (no parcial)
     const show=real.jugado||real.envivo;
     const hw=real.jugado&&real.golesLocal>real.golesVisitante, aw=real.jugado&&real.golesVisitante>real.golesLocal;
     r1=row(real.local, show?real.golesLocal:null, hw, real.local);
@@ -135,9 +135,13 @@ function box(p){
 }
 function matchRow(p, withPreds){
   // Cruces de KO sin equipos reales aún: rellenar con la proyección provisional (por hora)
-  const proj = (!p.local && !p.visitante && PROY[p.utc]) ? PROY[p.utc] : null;
-  const loc = p.local || (proj && proj.local) || "Por definir";
-  const vis = p.visitante || (proj && proj.visitante) || "Por definir";
+  // Un cruce KO es "real" solo con LOS DOS equipos puestos. Si la API solo ha
+  // asignado uno (lo va haciendo a trozos al cerrar grupos), ignoramos ese parcial
+  // y usamos la proyección, que es consistente (si no, salía "X vs Por definir" y bailaba).
+  const fullReal = !!(p.local && p.visitante);
+  const proj = (!fullReal && PROY[p.utc]) ? PROY[p.utc] : null;
+  const loc = fullReal ? p.local : (proj ? proj.local : (p.local || "Por definir"));
+  const vis = fullReal ? p.visitante : (proj ? proj.visitante : (p.visitante || "Por definir"));
   // dorado solo en el lado de la proyección que aún NO es fijo (grupo sin acabar / mejor tercero)
   const locProv = proj && !proj.localFijo ? " prov" : "";
   const visProv = proj && !proj.visitanteFijo ? " prov" : "";
