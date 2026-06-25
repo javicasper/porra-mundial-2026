@@ -62,11 +62,22 @@ def proyeccion_cuadro(tablas_grupos):
             return _pos_grupo(tablas_grupos, int(f[0]), f[1])
         return _pos_grupo(tablas_grupos, 3, alloc.get(otro[1]))   # tercero asignado a la casilla del 1.º
 
+    # ¿está ya FIJO ese lado? 1.º/2.º: si su grupo terminó. Tercero: solo cuando han
+    # acabado TODOS los grupos (hasta entonces el ranking de terceros puede cambiar).
+    def _gcompleto(g):
+        rows = tablas_grupos.get(g) or []
+        return len(rows) >= 4 and all((r.get("pj") or 0) >= 3 for r in rows)
+    todos = sum(1 for g in tablas_grupos if _gcompleto(g)) >= 12
+
+    def fijo(f):
+        return _gcompleto(f[1]) if f[0] in "12" else todos
+
     out = {}
     for f1, f2, utc in _R32.values():
         local, visit = equipo(f1, f2), equipo(f2, f1)
         if local and visit:
-            out[utc] = {"local": local, "visitante": visit}
+            out[utc] = {"local": local, "visitante": visit,
+                        "localFijo": fijo(f1), "visitanteFijo": fijo(f2)}
     return out
 
 

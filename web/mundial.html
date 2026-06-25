@@ -89,7 +89,7 @@ function flbl(f){            // etiqueta legible de un feeder cuando aún no hay
 }
 function crBox(win, putc, proy){
   const n=BR[win]; const real=putc[(n[2])]; const pj=proy&&proy[n[2]];
-  const row=(name,g,w,team)=>`<div class="bx-row ${w?'w':''}"><span class="fl">${team?fl(team):""}</span><span class="bx-nm">${name}</span><span class="bx-sc">${g!=null?g:""}</span></div>`;
+  const row=(name,g,w,team,prov)=>`<div class="bx-row ${w?'w':''}${prov?' prov':''}"><span class="fl">${team?fl(team):""}</span><span class="bx-nm">${name}</span><span class="bx-sc">${g!=null?g:""}</span></div>`;
   let r1,r2,foot,cls="";
   if(real && real.local){                       // equipos reales ya conocidos
     const show=real.jugado||real.envivo;
@@ -97,11 +97,12 @@ function crBox(win, putc, proy){
     r1=row(real.local, show?real.golesLocal:null, hw, real.local);
     r2=row(real.visitante, show?real.golesVisitante:null, aw, real.visitante);
     foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${hora(n[2])}</div>`);
-  }else if(pj){                                  // proyección provisional (según clasificación actual)
-    cls=" prov";
-    r1=row(pj.local,null,false,pj.local);
-    r2=row(pj.visitante,null,false,pj.visitante);
-    foot=`<div class="bx-t prov">proyección · ${hora(n[2])}</div>`;
+  }else if(pj){                                  // proyección: lado fijo en normal, lado en duda en dorado
+    const lp=!pj.localFijo, vp=!pj.visitanteFijo, dud=lp||vp;
+    cls = dud ? " prov" : "";
+    r1=row(pj.local,null,false,pj.local,lp);
+    r2=row(pj.visitante,null,false,pj.visitante,vp);
+    foot = dud ? `<div class="bx-t prov">proyección · ${hora(n[2])}</div>` : `<div class="bx-t">${hora(n[2])}</div>`;
   }else{                                         // esqueleto: feeders + hora
     r1=row(flbl(n[0]),null,false,null);
     r2=row(flbl(n[1]),null,false,null);
@@ -137,16 +138,19 @@ function matchRow(p, withPreds){
   const proj = (!p.local && !p.visitante && PROY[p.utc]) ? PROY[p.utc] : null;
   const loc = p.local || (proj && proj.local) || "Por definir";
   const vis = p.visitante || (proj && proj.visitante) || "Por definir";
-  const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : (p.fase + (proj?" · proyección":""));
-  const pc = proj ? " prov" : "";
+  // dorado solo en el lado de la proyección que aún NO es fijo (grupo sin acabar / mejor tercero)
+  const locProv = proj && !proj.localFijo ? " prov" : "";
+  const visProv = proj && !proj.visitanteFijo ? " prov" : "";
+  const dudoso = proj && (!proj.localFijo || !proj.visitanteFijo);
+  const tag = p.grupo ? ("Grupo "+p.grupo+(p.jornada?" · Jornada "+p.jornada:"")) : (p.fase + (dudoso?" · proyección":""));
   const k = pkey(p.local, p.visitante);
   const has = withPreds && !!(PREDIDX[k] && PREDIDX[k].length);
   const open = has && !!_predsOpen[k];
   const chev = has ? `<span class="pchev" aria-hidden="true">›</span>` : "";
   return `<div class="mt${has?' clk':''}${open?' on':''}"${has?` data-pk="${k}"`:""}>
-    <div class="th ${wc(p,'h')}${pc}">${loc}<span class="fl">${fl(loc)}</span></div>
+    <div class="th ${wc(p,'h')}${locProv}">${loc}<span class="fl">${fl(loc)}</span></div>
     ${box(p)}
-    <div class="ta ${wc(p,'a')}${pc}"><span class="fl">${fl(vis)}</span>${vis}</div>
+    <div class="ta ${wc(p,'a')}${visProv}"><span class="fl">${fl(vis)}</span>${vis}</div>
     <div class="tag"><span>${tag}</span>${chev}</div></div>`;
 }
 
