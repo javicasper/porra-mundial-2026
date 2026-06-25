@@ -96,17 +96,17 @@ function crBox(win, putc, proy){
     const hw=real.jugado&&real.golesLocal>real.golesVisitante, aw=real.jugado&&real.golesVisitante>real.golesLocal;
     r1=row(real.local, show?real.golesLocal:null, hw, real.local);
     r2=row(real.visitante, show?real.golesVisitante:null, aw, real.visitante);
-    foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${hora(n[2])}</div>`);
+    foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${fechaCorta(n[2])} · ${hora(n[2])}</div>`);
   }else if(pj){                                  // proyección: lado fijo en normal, lado en duda en dorado
     const lp=!pj.localFijo, vp=!pj.visitanteFijo, dud=lp||vp;
     cls = dud ? " prov" : "";
     r1=row(pj.local,null,false,pj.local,lp);
     r2=row(pj.visitante,null,false,pj.visitante,vp);
-    foot = dud ? `<div class="bx-t prov">proyección · ${hora(n[2])}</div>` : `<div class="bx-t">${hora(n[2])}</div>`;
+    foot = `<div class="bx-t${dud?' prov':''}">${fechaCorta(n[2])} · ${hora(n[2])}</div>`;
   }else{                                         // esqueleto: feeders + hora
     r1=row(flbl(n[0]),null,false,null);
     r2=row(flbl(n[1]),null,false,null);
-    foot=`<div class="bx-t">${hora(n[2])}</div>`;
+    foot=`<div class="bx-t">${fechaCorta(n[2])} · ${hora(n[2])}</div>`;
   }
   return `<div class="bx-tie${cls}">${r1}${r2}${foot}</div>`;
 }

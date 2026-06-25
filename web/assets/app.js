@@ -34,6 +34,7 @@ const $ = s => document.querySelector(s);
 const MAD = { timeZone: "Europe/Madrid" };
 const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
 const hora   = u => u ? new Date(u).toLocaleTimeString("es-ES", { ...MAD, hour:"2-digit", minute:"2-digit" }) : "·";
+const fechaCorta = u => u ? new Date(u).toLocaleDateString("es-ES", { ...MAD, day:"numeric", month:"short" }) : "";
 const diaKey = u => u ? new Date(u).toLocaleDateString("sv-SE", MAD) : "9999";
 const diaLbl = u => u ? cap(new Date(u).toLocaleDateString("es-ES", { ...MAD, weekday:"long", day:"numeric", month:"long" })) : "";
 
