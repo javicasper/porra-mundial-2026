@@ -143,20 +143,9 @@ def build_ko(partidos, tablas_grupos, posiciones=None):
         "campeon": None, "subcampeon": None, "tercero": None,
     }
 
-    # 1) Posiciones de grupo (oficiales si se pasan; si no, de tablas, solo grupos completos)
-    if posiciones is not None:
-        res["posiciones_grupos"] = list(posiciones)
-    else:
-        for g in sorted(tablas_grupos or {}):
-            if g not in _grupos_completos(partidos):
-                continue
-            for fila in tablas_grupos[g]:
-                res["posiciones_grupos"].append({"pos": f"{fila['pos']}º GRUPO {g}", "team": fila["team"]})
-
-    # 2) Clasificados por ronda. "Equipo clasificado a X" solo se conoce de verdad
-    #    cuando la ronda ANTERIOR ha terminado por completo. Si no se espera, la API
-    #    va asignando equipos a medida que se cierran grupos/cruces sueltos y los
-    #    puntos aparecerían/desaparecerían antes de tiempo ("bailando").
+    # Estado de cada ronda: una ronda "alimenta" a la siguiente solo cuando ha
+    # terminado del todo. Hasta entonces no se suman ni posiciones ni clasificados
+    # (si no, la API los va asignando a trozos y los puntos bailarían).
     def _fin(lst):
         return sum(1 for p in lst if _jugado(p))
     grupos_ok = sum(1 for p in partidos if p.get("fase") == "Grupos" and _jugado(p)) >= 72
@@ -164,6 +153,19 @@ def build_ko(partidos, tablas_grupos, posiciones=None):
     r16_ok = _fin(fases["Octavos"]) >= 8
     qf_ok = _fin(fases["Cuartos"]) >= 4
     sf_ok = _fin(fases["Semifinales"]) >= 2
+
+    # 1) Posiciones de grupo: solo cuando TODA la fase de grupos ha terminado.
+    if grupos_ok:
+        if posiciones is not None:
+            res["posiciones_grupos"] = list(posiciones)
+        else:
+            for g in sorted(tablas_grupos or {}):
+                if g not in _grupos_completos(partidos):
+                    continue
+                for fila in tablas_grupos[g]:
+                    res["posiciones_grupos"].append({"pos": f"{fila['pos']}º GRUPO {g}", "team": fila["team"]})
+
+    # 2) Clasificados por ronda (gateados por la ronda previa completa).
     res["clasif_dieciseisavos"] = _equipos_en(fases["Dieciseisavos"]) if grupos_ok else []
     res["clasif_octavos"] = _equipos_en(fases["Octavos"]) if r32_ok else []
     res["clasif_cuartos"] = _equipos_en(fases["Cuartos"]) if r16_ok else []
