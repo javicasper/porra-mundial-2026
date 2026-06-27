@@ -97,7 +97,7 @@ function crBox(win, putc, proy){
     r1=row(real.local, show?real.golesLocal:null, hw, real.local);
     r2=row(real.visitante, show?real.golesVisitante:null, aw, real.visitante);
     foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${fechaCorta(n[2])} · ${hora(n[2])}</div>`);
-  }else if(pj){                                  // proyección: lado fijo en normal, lado en duda en dorado
+  }else if(pj && !R32_DRAWN){                    // proyección (solo antes del sorteo real): lado fijo normal, dudoso dorado
     const lp=!pj.localFijo, vp=!pj.visitanteFijo, dud=lp||vp;
     cls = dud ? " prov" : "";
     r1=row(pj.local,null,false,pj.local,lp);
@@ -139,7 +139,7 @@ function matchRow(p, withPreds){
   // asignado uno (lo va haciendo a trozos al cerrar grupos), ignoramos ese parcial
   // y usamos la proyección, que es consistente (si no, salía "X vs Por definir" y bailaba).
   const fullReal = !!(p.local && p.visitante);
-  const proj = (!fullReal && PROY[p.utc]) ? PROY[p.utc] : null;
+  const proj = (!fullReal && !R32_DRAWN && PROY[p.utc]) ? PROY[p.utc] : null;
   const loc = fullReal ? p.local : (proj ? proj.local : (p.local || "Por definir"));
   const vis = fullReal ? p.visitante : (proj ? proj.visitante : (p.visitante || "Por definir"));
   // dorado solo en el lado de la proyección que aún NO es fijo (grupo sin acabar / mejor tercero)
@@ -163,11 +163,15 @@ let PREDIDX = {};            // grupos: pkey -> [{nombre, local, visitante, pred
 let PKO = {};                // KO: fase -> pkey -> {nombre -> {home,away,hteam,pts,tier}}
 let ALLPART = [];            // nombres de participantes (orden de ranking)
 let PROY = {};               // utc -> {local, visitante}: proyección provisional de dieciseisavos
+let R32_DRAWN = false;        // la API ya empezó a sortear dieciseisavos -> mandan sus equipos reales
 const _predsOpen = {};       // clave -> ¿panel desplegado? (sobrevive a re-render)
 const _KORONDAS = [["cruces_dieciseisavos","Dieciseisavos"],["cruces_octavos","Octavos"],
                    ["cruces_cuartos","Cuartos"],["cruces_semis","Semifinales"]];
 function buildPredIndex(d){
   PROY = d.proyeccion || {};
+  // Cuando la API empieza a poner equipos reales en dieciseisavos, su calendario manda
+  // (mis horas de proyección son del Excel y ya no cuadran). Dejamos de proyectar.
+  R32_DRAWN = (d.partidos||[]).some(p=>p.fase==="Dieciseisavos" && (p.local||p.visitante));
   ALLPART = (d.ranking||[]).map(r=>r.nombre);
   PREDIDX = {}; PKO = {};
   Object.values(d.participantes||{}).forEach(P=>{
