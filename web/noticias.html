@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>La Porra · Noticias</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="yr">Mundial 2026 · El Salseo</div>
+    <h1>La Porra</h1>
+    <div class="sub" id="meta"></div>
+  </div>
+  <nav class="switch">
+    <a href="index.html">Clasificación</a>
+    <a href="mundial.html">Resultados</a>
+    <a href="noticias.html" class="on">Noticias</a>
+  </nav>
+
+  <div id="view"></div>
+  <footer id="foot"></footer>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+// Mini-render de markdown -> HTML (titulares, negrita, cursiva, listas, párrafos).
+function md(t){
+  const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const inl = s => esc(s)
+    .replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")
+    .replace(/(^|[^*])\*(?!\*)(.+?)\*/g,"$1<em>$2</em>")
+    .replace(/`(.+?)`/g,"<code>$1</code>");
+  const out=[]; let lista=null;
+  for(let raw of (t||"").split("\n")){
+    const line=raw.trim();
+    if(!line){ if(lista){out.push("</ul>");lista=null;} continue; }
+    let m;
+    if(m=line.match(/^###?\s+(.*)/)){ if(lista){out.push("</ul>");lista=null;} out.push(`<h3>${inl(m[1])}</h3>`); }
+    else if(m=line.match(/^[-*]\s+(.*)/)){ if(!lista){out.push('<ul>');lista=1;} out.push(`<li>${inl(m[1])}</li>`); }
+    else { if(lista){out.push("</ul>");lista=null;} out.push(`<p>${inl(line)}</p>`); }
+  }
+  if(lista)out.push("</ul>");
+  return out.join("");
+}
+
+async function getNoticias(){
+  try{ const r=await fetch("noticias.json?_="+Date.now()); if(!r.ok)return {articulos:[]}; return await r.json(); }
+  catch(e){ return {articulos:[]}; }
+}
+
+function fechaLarga(f){
+  try{ return new Date(f+"T12:00:00").toLocaleDateString("es-ES",{day:"numeric",month:"long"}); }catch(e){ return f; }
+}
+
+function render(d, noti){
+  pintarMeta(d);
+  const arts=(noti.articulos||[]).slice().sort((a,b)=>(a.fecha<b.fecha?1:-1)); // más reciente arriba
+  if(!arts.length){ $("#view").innerHTML=`<div class="sec">Noticias</div><p style="color:var(--mut)">Aún no hay crónicas. Las primeras caen al cerrar cada ronda. 🐐</p>`; return; }
+  $("#view").innerHTML = arts.map((a,i)=>`
+    <article class="noti${i===0?' nfresh':''}">
+      <div class="ntag"><span class="nfase">${a.fase}</span><span class="bul"></span><span class="ndate">${fechaLarga(a.fecha)}</span>${i===0?'<span class="nnew">ÚLTIMA HORA</span>':''}</div>
+      <h2 class="ntit">${a.titulo}</h2>
+      <div class="nbody">${md(a.cuerpo)}</div>
+    </article>`).join("");
+}
+
+(async ()=>{
+  const [d, noti] = await Promise.all([getData(), getNoticias()]);
+  render(d, noti);
+  const f=$("#foot"); if(f) f.innerHTML="Crónicas generadas con Claude · datos reales de la porra<br>Roast incluido sin coste adicional 🔥";
+})();
+</script>
+</body>
+</html>

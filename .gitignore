@@ -7,6 +7,7 @@ data/resultados.json
 
 # Artefactos generados
 web/data.json
+web/noticias.json
 web/preview*.html
 web/verify.html
 
