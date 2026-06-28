@@ -129,7 +129,7 @@ def _grupos_completos(partidos):
     return {g for g, n in cnt.items() if n >= 6}
 
 
-def build_ko(partidos, tablas_grupos, posiciones=None):
+def build_ko(partidos, tablas_grupos, posiciones=None, clasif16=None):
     """Construye los campos de eliminatorias del esquema de resultados.
 
     partidos      : lista de build_web_data (fase, local, visitante, golesLocal,
@@ -177,7 +177,9 @@ def build_ko(partidos, tablas_grupos, posiciones=None):
                     res["posiciones_grupos"].append({"pos": f"{fila['pos']}º GRUPO {g}", "team": fila["team"]})
 
     # 2) Clasificados por ronda (gateados por la ronda previa completa).
-    res["clasif_dieciseisavos"] = _equipos_en(fases["Dieciseisavos"]) if grupos_ok else []
+    # Clasificados a dieciseisavos: preferimos los 32 calculados de la clasificación
+    # oficial (completos y fiables); si no, lo que la API tenga en los cruces.
+    res["clasif_dieciseisavos"] = clasif16 or (_equipos_en(fases["Dieciseisavos"]) if grupos_ok else [])
     res["clasif_octavos"] = _equipos_en(fases["Octavos"]) if r32_ok else []
     res["clasif_cuartos"] = _equipos_en(fases["Cuartos"]) if r16_ok else []
     res["clasif_semis"] = _equipos_en(fases["Semifinales"]) if qf_ok else []

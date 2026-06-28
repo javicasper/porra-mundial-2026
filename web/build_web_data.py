@@ -300,6 +300,35 @@ def build_posiciones_oficiales(standings, partidos):
     return out
 
 
+def clasificados_dieciseisavos(standings, partidos):
+    """Los 32 equipos que pasan a dieciseisavos, calculados de la clasificación OFICIAL
+    (1.º y 2.º de cada grupo + los 8 mejores terceros), sin depender de que la API
+    rellene el cuadro (la free tier va lentísima con eso). [] si no han acabado los
+    72 partidos de grupos."""
+    jug = sum(1 for p in partidos if p.get("fase") == "Grupos" and p.get("jugado") and p.get("golesLocal") is not None)
+    if jug < 72:
+        return []
+    primeros, segundos, terceros = [], [], []
+    for b in standings:
+        if b.get("type") != "TOTAL":
+            continue
+        for r in b.get("table", []):
+            name = (r.get("team") or {}).get("name")
+            pos = r.get("position")
+            if not name or not pos:
+                continue
+            if pos == 1:
+                primeros.append(es(name))
+            elif pos == 2:
+                segundos.append(es(name))
+            elif pos == 3:
+                terceros.append((es(name), r.get("points", 0), r.get("goalDifference", 0), r.get("goalsFor", 0)))
+    if len(primeros) < 12 or len(segundos) < 12 or len(terceros) < 12:
+        return []
+    terceros.sort(key=lambda t: (-t[1], -t[2], -t[3], t[0]))   # pts, dif, GF (criterio FIFA)
+    return primeros + segundos + [t[0] for t in terceros[:8]]
+
+
 def fetch_scorers():
     """Goleadores (best-effort: [] si no hay clave o falla)."""
     key = os.environ.get("FOOTBALLDATA_API_KEY")
@@ -379,7 +408,7 @@ def _lbl(utc):
     return f"{dt.day}/{dt.month}"
 
 
-def build_timeline(partidos, participantes, res_full, tablas_grupos, posic):
+def build_timeline(partidos, participantes, res_full, tablas_grupos, posic, clasif16=None):
     """Histórico de puntos. Fase de grupos: cada X = un partido jugado (puntos de
     grupos acumulados). Eliminatorias: un hito por partido KO jugado (más uno al
     cerrar los grupos), con el TOTAL COMPLETO a esa fecha — así entran posiciones,
@@ -433,7 +462,7 @@ def build_timeline(partidos, participantes, res_full, tablas_grupos, posic):
         return out
 
     def res_at(T):
-        ko = build_ko(mask(T), tablas_grupos, posiciones=(posic or None))
+        ko = build_ko(mask(T), tablas_grupos, posiciones=(posic or None), clasif16=(clasif16 or None))
         return {"grupos": res_full["grupos"], **ko}
 
     hitos = ([maxutc["Grupos"]] if maxutc.get("Grupos") else []) + [p["utc"] for p in ko_played]
@@ -549,17 +578,19 @@ def main():
     # Eliminatorias: alimenta el motor con los resultados reales de KO (posiciones,
     # clasificados, cruces, honor). Protegido: si algo falla, se mantiene la fase de
     # grupos y la web sigue funcionando.
-    posic = []
+    posic, clasif16 = [], []
     try:
-        posic = build_posiciones_oficiales(fetch_standings(), partidos)
-        res.update(build_ko(partidos, tablas_grupos, posiciones=(posic or None)))
+        standings = fetch_standings()
+        posic = build_posiciones_oficiales(standings, partidos)
+        clasif16 = clasificados_dieciseisavos(standings, partidos)
+        res.update(build_ko(partidos, tablas_grupos, posiciones=(posic or None), clasif16=(clasif16 or None)))
     except Exception as e:  # noqa: BLE001
         print(f"  [KO] omitido por error: {e}")
 
     ranking = build_ranking(res)
     participantes = build_participantes(res)
     goleadores = build_goleadores(fetch_scorers(), build_tla_map(matches))
-    timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic)
+    timeline = build_timeline(partidos, participantes, res, tablas_grupos, posic, clasif16=(clasif16 or None))
     try:
         proyeccion = proyeccion_cuadro(tablas_grupos)
     except Exception as e:  # noqa: BLE001
