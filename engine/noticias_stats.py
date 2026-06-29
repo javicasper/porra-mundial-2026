@@ -130,6 +130,34 @@ def stats_ko(d, fase):
             "ranking_porra": [{"nombre": x["nombre"], "pos": x["pos"], "puntos": x["puntos"]} for x in (d.get("ranking") or [])[:6]]}
 
 
+def stats_partido(d, fase, local, visitante):
+    """Datos de la PORRA para un solo cruce de eliminatoria (para la mini-crónica)."""
+    parts = d["participantes"]
+    key = _KO_KEY[fase]
+    pj = next((p for p in d["partidos"] if p.get("fase") == fase and p.get("local") == local
+               and p.get("visitante") == visitante and p.get("jugado")), None)
+    if not pj or pj.get("golesLocal") is None:
+        return None
+    gl, gv = pj["golesLocal"], pj["golesVisitante"]
+    gan = local if pj.get("ganador") == "local" else (visitante if pj.get("ganador") == "visitante" else None)
+    elim = visitante if gan == local else (local if gan == visitante else None)
+    predijeron = []
+    for Q in parts.values():
+        for c in (Q.get(key) or []):
+            m = c.get("match", "")
+            if c.get("real") and local in m and visitante in m:
+                predijeron.append({"nombre": Q["nombre"],
+                                   "pred": f'{c["pred"]["home"]}-{c["pred"]["away"]}',
+                                   "tier": c.get("tier"), "pts": c.get("pts", 0)})
+                break
+    clavaron = [a["nombre"] for a in predijeron if a["tier"] == "exacto"]
+    camp_elim = [Q["nombre"] for Q in parts.values() if elim and _norm(Q.get("campeon")) == _norm(elim)]
+    return {"local": local, "visitante": visitante, "marcador": f"{gl}-{gv}",
+            "avanza": gan, "eliminado": elim, "n_participantes": len(parts),
+            "predijeron_cruce": predijeron, "clavaron_marcador": clavaron,
+            "campeon_eliminado": camp_elim}
+
+
 if __name__ == "__main__":
     import sys
     d = cargar(sys.argv[1] if len(sys.argv) > 1 else None)

@@ -46,8 +46,13 @@ def evento_id(tla_local, tla_visit, fecha_iso):
     return None
 
 
-def hechos_partido(event_id):
-    """Devuelve héroes y paquetes de un partido a partir del summary de ESPN."""
+_SKIP_EV = {"Kickoff", "Halftime", "Start Delay", "End Delay", "Start 2nd Half",
+            "End Regular Time", "End Delay", "Game End"}
+
+
+def hechos_partido(event_id, ligero=False):
+    """Héroes y paquetes de un partido (ESPN). ligero=True omite cronología y
+    alineaciones (para el resumen de ronda, que junta muchos partidos)."""
     s = _get(f"{ESPN}/summary?event={event_id}")
     ke = s.get("keyEvents", [])
     goles, rojas, penal_fallados, propias = [], [], [], []
@@ -90,9 +95,21 @@ def hechos_partido(event_id):
                 porteros.append({"jugador": nm, "equipo": equipo, "paradas": sav,
                                  "encajados": enc, "rol": rol})
 
-    return {"event_id": event_id, "goles": goles, "hat_tricks": hat, "dobletes": dobletes,
-            "rojas": rojas, "penaltis_fallados": penal_fallados, "goles_propia": propias,
-            "porteros": porteros}
+    res = {"event_id": event_id, "goles": goles, "hat_tricks": hat, "dobletes": dobletes,
+           "rojas": rojas, "penaltis_fallados": penal_fallados, "goles_propia": propias,
+           "porteros": porteros}
+    if not ligero:
+        res["alineaciones"] = [
+            {"equipo": (r.get("team") or {}).get("displayName", ""),
+             "formacion": r.get("formation"),
+             "titulares": [(x.get("athlete") or {}).get("displayName", "")
+                           for x in (r.get("roster") or []) if x.get("starter")]}
+            for r in s.get("rosters", [])]
+        res["cronologia"] = [
+            {"min": (e.get("clock") or {}).get("displayValue", ""),
+             "tipo": (e.get("type") or {}).get("text", ""), "texto": e.get("text", "")}
+            for e in ke if (e.get("type") or {}).get("text", "") not in _SKIP_EV]
+    return res
 
 
 def hechos_ronda(d, fase):
@@ -103,7 +120,7 @@ def hechos_ronda(d, fase):
             continue
         try:
             eid = evento_id(p["tlaLocal"], p["tlaVisitante"], p["utc"])
-            h = hechos_partido(eid) if eid else {}
+            h = hechos_partido(eid, ligero=True) if eid else {}
         except Exception as e:
             h = {"error": str(e)}
         out.append({"local": p["local"], "visitante": p["visitante"],
