@@ -41,7 +41,9 @@ function md(t){
     const line=raw.trim();
     if(!line){ if(lista){out.push("</ul>");lista=null;} continue; }
     let m;
-    if(m=line.match(/^###?\s+(.*)/)){ if(lista){out.push("</ul>");lista=null;} out.push(`<h3>${inl(m[1])}</h3>`); }
+    if(m=line.match(/^!\[(.*?)\]\((.*?)\)\s*$/)){ if(lista){out.push("</ul>");lista=null;}
+      out.push(`<figure class="nfig"><img class="nimg" loading="lazy" alt="${esc(m[1])}" src="${esc(m[2])}" onerror="this.closest('.nfig').remove()">${m[1]?`<figcaption>${inl(m[1])}</figcaption>`:""}</figure>`); }
+    else if(m=line.match(/^###?\s+(.*)/)){ if(lista){out.push("</ul>");lista=null;} out.push(`<h3>${inl(m[1])}</h3>`); }
     else if(m=line.match(/^[-*]\s+(.*)/)){ if(!lista){out.push('<ul>');lista=1;} out.push(`<li>${inl(m[1])}</li>`); }
     else { if(lista){out.push("</ul>");lista=null;} out.push(`<p>${inl(line)}</p>`); }
   }
@@ -60,14 +62,18 @@ function fechaLarga(f){
 
 function render(d, noti){
   pintarMeta(d);
-  const arts=(noti.articulos||[]).slice().sort((a,b)=>(a.fecha<b.fecha?1:-1)); // más reciente arriba
+  const arts=(noti.articulos||[]).slice().sort((a,b)=>((b.orden||0)-(a.orden||0))||(a.fecha<b.fecha?1:-1)); // más reciente arriba
   if(!arts.length){ $("#view").innerHTML=`<div class="sec">Noticias</div><p style="color:var(--mut)">Aún no hay crónicas. Las primeras caen al cerrar cada ronda. 🐐</p>`; return; }
-  $("#view").innerHTML = arts.map((a,i)=>`
+  $("#view").innerHTML = arts.map((a,i)=>{
+    const src = a.img || (a.id?`assets/noti-${a.id}.png`:"");
+    const fig = src?`<figure class="nfig"><img class="nimg" loading="lazy" alt="${(a.titulo||"").replace(/"/g,'&quot;')}" src="${src}" onerror="this.closest('.nfig').remove()">${a.pie?`<figcaption>${a.pie}</figcaption>`:""}</figure>`:"";
+    return `
     <article class="noti${i===0?' nfresh':''}">
       <div class="ntag"><span class="nfase">${a.fase}</span><span class="bul"></span><span class="ndate">${fechaLarga(a.fecha)}</span>${i===0?'<span class="nnew">ÚLTIMA HORA</span>':''}</div>
       <h2 class="ntit">${a.titulo}</h2>
+      ${fig}
       <div class="nbody">${md(a.cuerpo)}</div>
-    </article>`).join("");
+    </article>`;}).join("");
 }
 
 (async ()=>{

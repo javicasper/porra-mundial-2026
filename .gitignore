@@ -10,6 +10,7 @@ web/data.json
 web/noticias.json
 web/preview*.html
 web/verify.html
+web/assets/noti-*.png
 
 # Python
 __pycache__/

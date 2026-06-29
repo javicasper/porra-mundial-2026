@@ -281,6 +281,9 @@ a{color:inherit;text-decoration:none}
 .ntag .nfase{color:var(--accent)}
 .ntag .nnew{color:#fff;background:var(--live);border-radius:5px;padding:1px 7px;letter-spacing:.04em}
 .ntit{font-family:var(--serif);font-weight:600;font-size:clamp(1.4rem,5.5vw,1.9rem);line-height:1.12;margin:8px 0 4px;letter-spacing:-.01em}
+.nfig{margin:14px 0 6px}
+.nfig img.nimg{display:block;width:100%;border-radius:12px;border:1px solid var(--hair);background:var(--card)}
+.nfig figcaption{font-size:.78rem;color:var(--mut);font-style:italic;margin-top:7px;padding:0 2px}
 .nbody{color:var(--ink2);font-size:.98rem;line-height:1.62}
 .nbody h3{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--ink);margin:18px 0 4px}
 .nbody p{margin:9px 0}
