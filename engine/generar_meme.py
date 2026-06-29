@@ -15,28 +15,51 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "web" / "assets"
 
-# Estilo fijo para que todos los memes peguen entre sí y con la cabra del 404.
-ESTILO_IMG = ("Modern flat cartoon caricature illustration, clean bold shapes, soft cel shading, "
+# Estilo fijo: TODOS los personajes son cabras (el universo de "El Salseo" y la 404).
+ESTILO_IMG = ("All characters are friendly anthropomorphic cartoon goats with little horns and "
+              "beards (the mascot universe of 'El Salseo'), wearing football kits where relevant. "
+              "Modern flat cartoon caricature illustration, clean bold shapes, soft cel shading, "
               "expressive funny faces, humorous sports-meme vibe, warm cream background #f7f6f1, "
               "no text, no letters, no logos, no watermarks.")
 
 
-def concepto_desde_cronica(titulo, primer_parrafo=""):
-    """Pide a Claude una descripción visual en inglés para el meme."""
-    prompt = (
-        "Eres director de arte de un medio de humor futbolero. A partir de este titular y "
-        "entradilla de una crónica de una porra del Mundial, dame UNA sola descripción visual "
-        "en INGLÉS (2-3 frases) para una ilustración tipo meme, divertida y cartoon, que la "
-        "ilustre. Describe SOLO la escena (personajes, acción, gesto cómico); nada de texto en "
-        "la imagen, nada de estilo (eso lo pongo yo). Devuelve solo la descripción, sin comillas.\n\n"
-        f"TITULAR: {titulo}\nENTRADILLA: {primer_parrafo}"
-    )
+def _claude(prompt, timeout=180, fallback=""):
     try:
-        r = subprocess.run(["claude", "-p", prompt], capture_output=True, text=True, timeout=180)
-        c = (r.stdout or "").strip().strip('"').replace("\n", " ")
-        return c or titulo
+        r = subprocess.run(["claude", "-p", prompt], capture_output=True, text=True, timeout=timeout)
+        return (r.stdout or "").strip().strip('"').replace("\n", " ") or fallback
     except Exception:
-        return titulo
+        return fallback
+
+
+# Regla obligatoria: el generador de imágenes bloquea nombres de personas reales
+# (futbolistas, entrenadores). Hay que representarlos por selección/camiseta y rasgos.
+_NO_REALES = ("NUNCA nombres a personas reales (futbolistas, entrenadores, famosos): el generador "
+              "de imágenes los bloquea. Represéntalos por su selección/camiseta, dorsal o rasgos "
+              "genéricos (p.ej. 'una cabra con la camiseta de Argentina y barbita'), nunca por su "
+              "nombre. Sí puedes usar los nombres de los participantes de la porra (son anónimos).")
+
+
+def concepto_desde_cronica(titulo, primer_parrafo=""):
+    """Concepto visual (inglés) para un meme puntual a partir de titular + entradilla."""
+    return _claude(
+        "Eres director de arte de un medio de humor futbolero (universo de cabras). A partir de "
+        "este titular y entradilla de una crónica de una porra, dame UNA sola descripción visual "
+        "en INGLÉS (2-3 frases) de una escena tipo meme que la ilustre. Describe SOLO la escena "
+        "(personajes, acción, gesto cómico); nada de texto en la imagen, nada de estilo (eso lo "
+        "pongo yo). " + _NO_REALES + " Devuelve solo la descripción, sin comillas.\n\n"
+        f"TITULAR: {titulo}\nENTRADILLA: {primer_parrafo}", fallback=titulo)
+
+
+def concepto_composite(titulo, cuerpo):
+    """Concepto visual (inglés) para la imagen PRINCIPAL: un montaje que refleje TODO."""
+    return _claude(
+        "Eres director de arte de un medio de humor futbolero (universo de cabras). A partir de "
+        "esta crónica de una porra, descríbeme en INGLÉS UNA sola escena tipo collage/montaje que "
+        "combine los 3-4 momentos MÁS destacados (el líder, el bombazo, el eliminado, el pichichi, "
+        "el colista...). Solo la escena, los personajes y sus gestos cómicos; sin texto en la "
+        "imagen, sin estilo. MUY IMPORTANTE: refleja los hechos REALES de la crónica, no inventes "
+        "resultados ni equipos. " + _NO_REALES + " 2-4 frases. Devuelve solo la descripción.\n\n"
+        f"TITULAR: {titulo}\nCRÓNICA:\n{cuerpo[:1600]}", fallback=titulo)
 
 
 def optimizar(path, ancho=1024):

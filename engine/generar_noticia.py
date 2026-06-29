@@ -32,7 +32,7 @@ IDIOMA Y TONO: español de España, coloquial y con mala leche cariñosa. Vacila
 
 FORMATO: markdown. La PRIMERA línea es "# " + un titular gancho y gamberro. Después, 4-6 secciones, cada una con "### Subtítulo" y uno o dos párrafos. Usa **negritas** para nombres de participantes, equipos y datos. Entre 300 y 450 palabras. Que tenga chicha y variedad, no listas escuetas. Como mucho UN emoji en toda la crónica, o ninguno.
 
-IMÁGENES: puedes insertar HASTA 2 marcadores de imagen, cada uno en su PROPIA línea (entre secciones, donde más gracia tenga), con este formato EXACTO: [[IMG: descripción visual en INGLÉS de una escena cartoon divertida que ilustre ese momento, sin texto en la imagen | pie de foto corto y gamberro en español]]. Úsalos solo en los momentos más dramáticos (un bombazo, un campeón eliminado, un cabezazo de la clasificación); si no aportan, no pongas ninguno.
+IMÁGENES: puedes insertar HASTA 2 marcadores de imagen, cada uno en su PROPIA línea (entre secciones, donde más gracia tenga), con este formato EXACTO: [[IMG: descripción visual en INGLÉS de una escena cartoon divertida que ilustre ese momento, sin texto en la imagen | pie de foto corto y gamberro en español]]. Úsalos solo en los momentos más dramáticos (un bombazo, un campeón eliminado, un cabezazo de la clasificación); si no aportan, no pongas ninguno. En la descripción en inglés NUNCA nombres a personas reales (futbolistas/entrenadores): represéntalos por su selección/camiseta o rasgos (el generador de imágenes bloquea nombres reales).
 
 REGLA DE ORO: NO inventes NADA. Usa SOLO los datos del JSON que te paso (participantes, resultados, marcadores, puntos, eliminados, campeones eliminados). Si algo no está en los datos, no lo menciones. Devuelve SOLO el markdown del artículo, sin comentarios, sin explicaciones y sin ```.'''
 
@@ -73,10 +73,9 @@ def generar(fase_id):
         cuerpo = cuerpo.replace(f"[[IMG: {tok}]]", repl, 1).replace(f"[[IMG:{tok}]]", repl, 1)
     cuerpo = TOKEN.sub("", cuerpo).strip()  # limpia marcadores sobrantes
 
-    # Meme principal (cabecera de la crónica): noti-<fase_id>.png
-    primer = next((l for l in cuerpo.split("\n")
-                   if l.strip() and not l.lstrip().startswith(("#", "!"))), "")
-    generar_meme(fase_id, titulo=titulo, primer_parrafo=primer[:300])
+    # Meme principal (cabecera): montaje que refleja TODOS los momentos de la crónica
+    from generar_meme import concepto_composite
+    generar_meme(fase_id, concepto=concepto_composite(titulo, cuerpo))
 
     doc = json.loads(NOTI.read_text(encoding="utf-8")) if NOTI.exists() else {"articulos": []}
     doc["articulos"] = [a for a in doc["articulos"] if a.get("id") != fase_id]
