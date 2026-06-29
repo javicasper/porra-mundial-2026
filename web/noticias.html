@@ -71,6 +71,7 @@ function render(d, noti){
     <article class="noti${i===0?' nfresh':''}">
       <div class="ntag"><span class="nfase">${a.fase}</span><span class="bul"></span><span class="ndate">${fechaLarga(a.fecha)}</span>${i===0?'<span class="nnew">ÚLTIMA HORA</span>':''}</div>
       <h2 class="ntit">${a.titulo}</h2>
+      ${a.firma?`<div class="nby">por <b>${a.firma}</b></div>`:""}
       ${fig}
       <div class="nbody">${md(a.cuerpo)}</div>
     </article>`;}).join("");

@@ -10,6 +10,7 @@ ronda está completa lanza la crónica general.
 """
 from __future__ import annotations
 import json
+import random
 import re
 import subprocess
 import sys
@@ -29,6 +30,16 @@ FASES = {"dieciseisavos": "Dieciseisavos", "octavos": "Octavos",
 # Orden de portada (mayor = más arriba). Grupos/jornadas: 1-4. Cada ronda KO reserva
 # un bloque: los partidos = base+nº de partido (por hora); la general = base+99.
 KO_BASE = {"dieciseisavos": 500, "octavos": 600, "cuartos": 700, "semifinales": 800}
+
+# Firmas: periodistas/tertulianos deportivos españoles retocados (parodia, no son los reales).
+FIRMAS = ["Tomás Ronquero", "Josep Pedrebol", "Manolo Llama", "Edu Aguirné",
+          "Cristóbal Suria", "Juanma Rodrigálvez", "Maldoni", "Paco Gonzálvez",
+          "Manu Carraño", "Quim Doménec", "Mónica Marchanti", "Ciro Pérez",
+          "Lobo Carrasca", "Pipi Estrado", "Iturralde Gonzálvez", "Roberto Palomir"]
+
+
+def _firma():
+    return random.choice(FIRMAS)
 
 _TONO = '''IDIOMA Y TONO: español de España, coloquial y con mala leche cariñosa. Vacila con gracia a los que han fallado, ensalza a los cracks (con criterio), dramatiza las sorpresas y las eliminaciones, y cébate —con cariño— con quien tenga ya un campeón eliminado. Usa expresiones de aquí cuando peguen de forma natural (hacer el primo, pinchar, palmar, a llorar a la grada, de chiripa, ni de coña, menudo batacazo, vaya tela, irse de vacío, comerse los mocos). PROHIBIDO: anglicismos forzados (roast, hype, GOAT, epic, clutch...), tono de influencer o de TikTok, hashtags, y frases hechas que den cringe o suenen a IA. Nada de "agárrate", "prepárate para", "sin más dilación". Que suene a colega con gracia escribiendo en el grupo.'''
 
@@ -135,7 +146,7 @@ def generar_partido(fase_id, p):
     generar_meme(sub_id, concepto=concepto_composite(titulo, cuerpo))
     _upsert({"id": sub_id, "fase": fase, "fecha": _fecha(p["utc"]),
              "orden": KO_BASE.get(fase_id, 500) + _seq(d, fase, p),
-             "titulo": titulo, "cuerpo": cuerpo})
+             "firma": _firma(), "titulo": titulo, "cuerpo": cuerpo})
     print("OK partido", sub_id, "->", titulo)
     return True
 
@@ -178,7 +189,8 @@ def generar(fase_id):
 
     generar_meme(fase_id, concepto=concepto_composite(titulo, cuerpo))
     _upsert({"id": fase_id, "fase": fase + " · resumen", "fecha": _fecha_fin(d, fase),
-             "orden": KO_BASE.get(fase_id, 500) + 99, "titulo": titulo, "cuerpo": cuerpo})
+             "orden": KO_BASE.get(fase_id, 500) + 99, "firma": _firma(),
+             "titulo": titulo, "cuerpo": cuerpo})
     print("OK resumen", fase_id, "->", titulo)
 
 
