@@ -36,9 +36,9 @@ MOTES: para los jugadores que destaquen, BUSCA EN INTERNET (usa la herramienta d
 
 MUY IMPORTANTE: los goles, resultados y jugadores son SOLO los que aparecen en los HECHOS REALES; no te inventes ninguno (los motes/apodos sí los puedes buscar en internet).
 
-FORMATO: markdown. La PRIMERA línea es "# " + un titular gancho y gamberro. Después, 4-6 secciones, cada una con "### Subtítulo" y uno o dos párrafos. Usa **negritas** para nombres de participantes, equipos y datos. Entre 300 y 450 palabras. Que tenga chicha y variedad, no listas escuetas. Como mucho UN emoji en toda la crónica, o ninguno.
+FORMATO: markdown. La PRIMERA línea es "# " + un titular gancho y gamberro. Después, secciones con "### Subtítulo" y uno o dos párrafos cada una. Usa **negritas** para nombres de participantes, equipos y datos. La longitud va según el número de partidos de la ronda (te lo digo abajo): cuando haya muchos partidos, la crónica puede y debe ser LARGA cubriéndolos todos; cuando haya pocos, más breve. Cubre todo lo reseñable pero sin paja. Como mucho UN emoji en toda la crónica, o ninguno.
 
-IMÁGENES: puedes insertar HASTA 2 marcadores de imagen, cada uno en su PROPIA línea (entre secciones, donde más gracia tenga), con este formato EXACTO: [[IMG: descripción visual en INGLÉS de una escena cartoon divertida que ilustre ese momento, sin texto en la imagen | pie de foto corto y gamberro en español]]. Úsalos solo en los momentos más dramáticos (un bombazo, un campeón eliminado, un cabezazo de la clasificación); si no aportan, no pongas ninguno. En la descripción en inglés NUNCA nombres a personas reales (futbolistas/entrenadores): represéntalos por su selección/camiseta o rasgos (el generador de imágenes bloquea nombres reales).
+IMÁGENES: puedes insertar marcadores de imagen, cada uno en su PROPIA línea (entre secciones, donde más gracia tenga), con este formato EXACTO: [[IMG: descripción visual en INGLÉS de una escena cartoon divertida que ilustre ese momento, sin texto en la imagen | pie de foto corto y gamberro en español]]. Cuántas puedes poner te lo digo abajo según la ronda; ponlas donde de verdad haya algo MUY reseñable (un bombazo, un campeón eliminado, un partidazo de un jugador, un cabezazo de la clasificación), no por rellenar. En la descripción en inglés NUNCA nombres a personas reales (futbolistas/entrenadores): represéntalos por su selección/camiseta o rasgos (el generador de imágenes bloquea nombres reales).
 
 REGLA DE ORO: NO inventes NADA. Usa SOLO los datos del JSON que te paso (participantes, resultados, marcadores, puntos, eliminados, campeones eliminados). Si algo no está en los datos, no lo menciones. Devuelve SOLO el markdown del artículo, sin comentarios, sin explicaciones y sin ```.'''
 
@@ -63,7 +63,15 @@ def generar(fase_id):
     except Exception as e:
         print("aviso: sin hechos de fútbol (", e, ")")
         hechos = []
-    prompt = (ESTILO + "\n\nRONDA: " + fase
+    n_part = len(st.get("resultados") or []) or len(hechos) or 1
+    largo = ("MUY larga, no te cortes" if n_part >= 12 else
+             "larga" if n_part >= 6 else
+             "media" if n_part >= 3 else "más bien corta y al grano")
+    ronda_info = (f"\n\nESTA RONDA: {n_part} partidos. Longitud de la crónica: {largo} "
+                  f"(cubre todos los partidos con algo reseñable, de la porra o del fútbol). "
+                  f"Puedes poner HASTA {n_part} imágenes inline [[IMG]], idealmente una por partido o "
+                  f"momento MUY reseñable; solo donde aporte de verdad, no por rellenar.")
+    prompt = (ESTILO + ronda_info + "\n\nRONDA: " + fase
               + "\nDATOS PORRA (JSON):\n" + json.dumps(st, ensure_ascii=False, indent=1)
               + "\nHECHOS REALES DE LOS PARTIDOS (JSON):\n" + json.dumps(hechos, ensure_ascii=False, indent=1))
     # --allowedTools WebSearch: para que busque los motes/apodos del momento de cada jugador.
@@ -80,7 +88,8 @@ def generar(fase_id):
         titulo, cuerpo = fase, txt
 
     # Imágenes incrustadas: cada [[IMG: escena en inglés | pie]] -> meme propio + markdown ![pie](...)
-    tokens = TOKEN.findall(cuerpo)[:2]
+    # Tope = un meme por partido de la ronda (en dieciseisavos pueden ser muchos).
+    tokens = TOKEN.findall(cuerpo)[:max(n_part, 2)]
     for n, tok in enumerate(tokens, start=2):
         concepto, _, pie = tok.partition("|")
         concepto, pie = concepto.strip(), pie.strip()
