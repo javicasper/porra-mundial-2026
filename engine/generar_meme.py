@@ -15,9 +15,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "web" / "assets"
 
-# Estilo fijo: TODOS los personajes son cabras (el universo de "El Salseo" y la 404).
-ESTILO_IMG = ("All characters are friendly anthropomorphic cartoon goats with little horns and "
-              "beards (the mascot universe of 'El Salseo'), wearing football kits where relevant. "
+# Estilo fijo: TODO es cabra (el universo de "El Salseo" y la 404). Si la escena pide
+# otra cosa (un bicho, un objeto, un personaje), se hace la VERSIÓN CABRA de eso.
+ESTILO_IMG = ("Everything is in the goat universe of 'El Salseo': characters are friendly cartoon "
+              "goats with little horns and beards, wearing football kits where relevant. If the "
+              "scene calls for an animal, creature or character (e.g. a mosquito, a robot, a king), "
+              "draw a funny GOAT version of it, always keeping little goat horns and a beard. "
               "Modern flat cartoon caricature illustration, clean bold shapes, soft cel shading, "
               "expressive funny faces, humorous sports-meme vibe, warm cream background #f7f6f1, "
               "no text, no letters, no logos, no watermarks.")
