@@ -34,7 +34,7 @@ KO_BASE = {"dieciseisavos": 500, "octavos": 600, "cuartos": 700, "semifinales": 
 # Firmas: periodistas/tertulianos deportivos españoles retocados (parodia, no son los reales).
 FIRMAS = ["Tomás Ronquero", "Josep Pedrebol", "Manolo Llama", "Edu Aguirné",
           "Cristóbal Suria", "Juanma Rodrigálvez", "Maldoni", "Paco Gonzálvez",
-          "Manu Carraño", "Quim Doménec", "Mónica Marchanti", "Ciro Pérez",
+          "Manu Carraño", "Mónica Marchanti", "Ciro Pérez",
           "Lobo Carrasca", "Pipi Estrado", "Iturralde Gonzálvez", "Roberto Palomir"]
 
 
