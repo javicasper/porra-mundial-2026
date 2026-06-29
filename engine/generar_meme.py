@@ -39,6 +39,21 @@ def concepto_desde_cronica(titulo, primer_parrafo=""):
         return titulo
 
 
+def optimizar(path, ancho=1024):
+    """Redimensiona y comprime el PNG (la columna web mide ~600px; no hace falta 1536)."""
+    try:
+        from PIL import Image
+        im = Image.open(path).convert("RGB")
+        if im.width > ancho:
+            im = im.resize((ancho, round(im.height * ancho / im.width)), Image.LANCZOS)
+        # cartoon plano -> paleta de 256 colores: calidad casi idéntica y peso mínimo
+        im.convert("P", palette=Image.ADAPTIVE, colors=256).save(path, optimize=True)
+        return True
+    except Exception as e:
+        print("no se pudo optimizar", path, e)
+        return False
+
+
 def _codex_prompt(out_path, concepto):
     return (
         f"Tienes red. Llama a la API de imágenes de OpenAI (gpt-image-1) y guarda el PNG en "
@@ -63,6 +78,8 @@ def generar_meme(fase_id, concepto=None, titulo="", primer_parrafo="", timeout=3
         print("codex falló:", e)
         return False
     ok = out.exists() and out.stat().st_size > 20000
+    if ok:
+        optimizar(out)
     print(("OK meme " if ok else "NO se generó meme ") + str(out),
           f"({out.stat().st_size} bytes)" if out.exists() else "(no existe)")
     return ok
