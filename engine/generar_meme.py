@@ -8,12 +8,23 @@ a la API de imágenes de OpenAI, gpt-image-1) y la guarda en web/assets/noti-<id
 Uso:  python3 engine/generar_meme.py <id> ["concepto visual en inglés opcional"]
 """
 from __future__ import annotations
+import glob
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "web" / "assets"
+
+
+def _codex_bin():
+    """Localiza el binario de codex (en cron el PATH no trae el bin de nvm)."""
+    c = shutil.which("codex")
+    if c:
+        return c
+    cands = sorted(glob.glob("/root/.nvm/versions/node/*/bin/codex"))
+    return cands[-1] if cands else "codex"
 
 # Estilo fijo: TODO es cabra (el universo de "El Salseo" y la 404). Si la escena pide
 # otra cosa (un bicho, un objeto, un personaje), se hace la VERSIÓN CABRA de eso.
@@ -97,7 +108,7 @@ def generar_meme(fase_id, concepto=None, titulo="", primer_parrafo="", timeout=3
     if not concepto:
         concepto = concepto_desde_cronica(titulo or fase_id, primer_parrafo)
     try:
-        subprocess.run(["codex", "exec", "--dangerously-bypass-approvals-and-sandbox",
+        subprocess.run([_codex_bin(), "exec", "--dangerously-bypass-approvals-and-sandbox",
                         _codex_prompt(str(out), concepto)],
                        capture_output=True, text=True, timeout=timeout)
     except Exception as e:

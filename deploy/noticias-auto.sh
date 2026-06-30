@@ -2,6 +2,8 @@
 # Auto-crónicas de eliminatoria (El Salseo). Genera la mini-crónica de cada partido
 # jugado que aún no tenga y, al cerrar una ronda, la crónica general. Pensado para cron.
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/bin
+# codex vive en el bin de nvm; añadirlo para que la generación de memes funcione en cron
+for nb in /root/.nvm/versions/node/*/bin; do PATH="$PATH:$nb"; done
 REPO=/root/porra2026
 LOG=/var/log/porra-noticias.log
 cd "$REPO" || exit 1
