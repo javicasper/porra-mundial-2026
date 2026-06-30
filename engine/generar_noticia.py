@@ -14,6 +14,7 @@ import random
 import re
 import subprocess
 import sys
+import unicodedata
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
@@ -41,6 +42,27 @@ FIRMAS = ["Tomás Ronquero", "Josep Pedrebol", "Manolo Llama", "Edu Aguirné",
 def _firma():
     return random.choice(FIRMAS)
 
+
+def _nrm(s):
+    return unicodedata.normalize("NFKD", str(s or "")).encode("ascii", "ignore").decode().lower().strip()
+
+
+def _banter_para(nombres):
+    """Chuleta de coñas (data/banter.json) de las selecciones implicadas."""
+    try:
+        b = {k: v for k, v in json.loads((ROOT / "data" / "banter.json").read_text(encoding="utf-8")).items()
+             if k != "_info"}
+    except Exception:
+        return {}
+    out = {}
+    for n in nombres:
+        nn = _nrm(n)
+        for k, v in b.items():
+            if _nrm(k) == nn or _nrm(k) in nn or nn in _nrm(k):
+                out[k] = v
+                break
+    return out
+
 _TONO = '''IDIOMA Y TONO: español de España, coloquial y con mala leche cariñosa. Vacila con gracia a los que han fallado, ensalza a los cracks (con criterio), dramatiza las sorpresas y las eliminaciones, y cébate —con cariño— con quien tenga ya un campeón eliminado. Usa expresiones de aquí cuando peguen de forma natural (hacer el primo, pinchar, palmar, de chiripa, ni de coña, menudo batacazo, vaya tela, irse de vacío, quedar retratado, hacer el ridículo). VARÍA las coletillas, no repitas siempre la misma muletilla en cada crónica. El roast tiene que ser un ZASCA ingenioso y con criterio futbolístico (de adulto que sabe de fútbol), NO chorradas infantiles de patio de colegio (nada de "comerse los mocos" y cosas así). PROHIBIDO: anglicismos forzados (roast, hype, GOAT, epic, clutch...), tono de influencer o de TikTok, hashtags, y frases hechas que den cringe o suenen a IA. Nada de "agárrate", "prepárate para", "sin más dilación". Que suene a colega con gracia y nivel escribiendo en el grupo.
 
 TOQUE PICANTE: NO hagas un parte de hechos plano y cronológico. Los datos (goles, minutos, puntos) son solo el esqueleto; lo que mola es la SALSA: mójate con opiniones fuertes, hot takes, morbo, pullas afiladas, exageración cómica y alguna provocación picante. Ten criterio y opinión propia, no te limites a narrar lo que pasó. Picante y descarado sí; vulgar gratuito o infantil, no.
@@ -55,7 +77,7 @@ ESTILO = f'''Eres el cronista estrella de "El Salseo", el diario más gamberro d
 
 {_TONO}
 
-CONTENIDO: mezcla DOS cosas. (1) LA PORRA: quién acertó/falló los cruces, la clasificación general, campeones eliminados, francotiradores, colistas. (2) EL FÚTBOL REAL de los partidos (te paso los HECHOS REALES): héroes y paquetes — hat-tricks, dobletes, paradones, penaltis fallados o parados, tarjetas rojas, goles en propia, porteros-coladero.
+CONTENIDO: mezcla TRES cosas. (1) LA PORRA: quién acertó/falló los cruces, la clasificación general, campeones eliminados, francotiradores, colistas. (2) EL FÚTBOL REAL de los partidos (te paso los HECHOS REALES): héroes y paquetes — hat-tricks, dobletes, paradones, penaltis fallados o parados, tarjetas rojas, goles en propia, porteros-coladero. (3) LOS EQUIPOS Y LAS NACIONES: cébate también con ellos (no solo con jugadores) tirando de la chuleta de BANTER que te paso (autobús aparcado, pecho frío, ArgenFIFA, la naranja mecánica de los penaltis, "it's coming home"...). Y si pega, mete el guiño cultural majo del país (estilo el manga de Japón).
 
 {_MOTES}
 
@@ -69,7 +91,7 @@ ESTILO_PARTIDO = f'''Eres el cronista estrella de "El Salseo", el diario más ga
 
 {_TONO}
 
-CONTENIDO: (1) EL PARTIDO REAL (te paso los HECHOS, la CRONOLOGÍA con los minutos y las ALINEACIONES/titulares): cuenta cómo fue (quién empezó mandando, remontadas, el gol que lo decidió, el alargue), los héroes y los paquetes — goles, hat-tricks, asistencias, penaltis fallados/parados, tarjetas rojas, paradones, porteros-coladero, y cita a quien entró o salió del banquillo si tuvo su miga. (2) EL ÁNGULO PORRA de ESTE cruce (te paso los datos): quién predijo este cruce, quién clavó el marcador, a quién le eliminan un campeón.
+CONTENIDO: (1) EL PARTIDO REAL (te paso los HECHOS, la CRONOLOGÍA con los minutos y las ALINEACIONES/titulares): cuenta cómo fue (quién empezó mandando, remontadas, el gol que lo decidió, el alargue), los héroes y los paquetes — goles, hat-tricks, asistencias, penaltis fallados/parados, tarjetas rojas, paradones, porteros-coladero, y cita a quien entró o salió del banquillo si tuvo su miga. (2) EL ÁNGULO PORRA de ESTE cruce (te paso los datos): quién predijo este cruce, quién clavó el marcador, a quién le eliminan un campeón. (3) Cébate con los DOS EQUIPOS tirando de la chuleta de BANTER de nación que te paso (autobús, pecho frío, ArgenFIFA, etc.), y si pega, un guiño cultural majo del país.
 
 {_MOTES}
 
@@ -140,9 +162,12 @@ def generar_partido(fase_id, p):
     if not st:
         print("partido sin datos:", p["local"], p["visitante"])
         return False
+    banter = _banter_para([p["local"], p["visitante"]])
     prompt = (ESTILO_PARTIDO + f"\n\nPARTIDO: {p['local']} {st['marcador']} {p['visitante']}"
               + "\nDATOS PORRA DEL CRUCE (JSON):\n" + json.dumps(st, ensure_ascii=False)
-              + "\nHECHOS REALES DEL PARTIDO (JSON):\n" + json.dumps(_hechos_partido(p), ensure_ascii=False))
+              + "\nHECHOS REALES DEL PARTIDO (JSON):\n" + json.dumps(_hechos_partido(p), ensure_ascii=False)
+              + "\nBANTER DE EQUIPO/NACIÓN (chuleta de coñas, tira de ellas; mismo límite de siempre):\n"
+              + json.dumps(banter, ensure_ascii=False))
     titulo, cuerpo = _claude(prompt, timeout=400)
     titulo = titulo or f"{p['local']} {st['marcador']} {p['visitante']}"
     cuerpo = TOKEN.sub("", cuerpo).strip()
@@ -176,9 +201,13 @@ def generar(fase_id):
     ronda_info = (f"\n\nESTA RONDA: {n_part} partidos. Longitud: {largo} (cubre todos los partidos con "
                   f"algo reseñable). Puedes poner HASTA {n_part} imágenes inline [[IMG]], solo donde "
                   f"aporte de verdad, no por rellenar.")
+    equipos = {t for r in (st.get("resultados") or []) for t in (r.get("local"), r.get("visitante")) if t}
+    banter = _banter_para(equipos)
     prompt = (ESTILO + ronda_info + "\n\nRONDA: " + fase
               + "\nDATOS PORRA (JSON):\n" + json.dumps(st, ensure_ascii=False, indent=1)
-              + "\nHECHOS REALES DE LOS PARTIDOS (JSON):\n" + json.dumps(hechos, ensure_ascii=False, indent=1))
+              + "\nHECHOS REALES DE LOS PARTIDOS (JSON):\n" + json.dumps(hechos, ensure_ascii=False, indent=1)
+              + "\nBANTER DE EQUIPO/NACIÓN (chuleta de coñas, tira de ellas; mismo límite de siempre):\n"
+              + json.dumps(banter, ensure_ascii=False))
     titulo, cuerpo = _claude(prompt, timeout=600)
     titulo = titulo or fase
 
