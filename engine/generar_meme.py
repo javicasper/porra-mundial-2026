@@ -36,10 +36,11 @@ ESTILO_IMG = ("Everything is in the goat universe of 'El Salseo': characters are
               "expressive funny faces, humorous sports-meme vibe, warm cream background #f7f6f1, "
               "no text, no letters, no logos, no watermarks. "
               "Go for a FUNNY SITUATIONAL GAG (a comic action that roasts the loser or celebrates "
-              "the winner) rather than goats merely posing in their kits. Make it RICH and DETAILED, "
-              "like a busy comic poster: layered scene, expressive characters and fun background "
-              "gags and props. The goats are goofy NON-SEXUALIZED cartoon animals: no human breasts, "
-              "no cleavage, no feminine human curves — just funny athletic cartoon goats.")
+              "the winner) rather than goats posing. Keep the composition CLEAN and FOCUSED on ONE "
+              "clear main gag, with tasteful, subtle detail and plenty of breathing room — NOT a "
+              "cluttered, busy poster crammed with elements. Elegant and readable beats maximalist. "
+              "The goats are goofy NON-SEXUALIZED cartoon animals: no human breasts, no cleavage, no "
+              "feminine human curves — just funny athletic cartoon goats.")
 
 
 def _claude(prompt, timeout=180, fallback=""):
@@ -76,19 +77,18 @@ def concepto_composite(titulo, cuerpo):
     """Concepto visual (inglés) para la imagen PRINCIPAL: un póster cómico RICO y detallado."""
     return _claude(
         "Eres director de arte de un medio de humor futbolero gamberro (universo de cabras). A partir "
-        "de esta crónica de una porra, descríbeme en INGLÉS la escena de UN PÓSTER CÓMICO rico y muy "
-        "detallado que combine los momentos clave del partido/ronda como GAGS visuales con situación. "
+        "de esta crónica de una porra, descríbeme en INGLÉS la escena de UNA viñeta cómica con FOCO "
+        "en UN gag principal (el momento más representativo del partido/ronda), limpia y con aire. "
         "INSTRUCCIONES:\n"
-        "- Coge las coñas, motes y metáforas que YA usa esta crónica y conviértelas en imágenes "
-        "potentes. Inventa la metáfora visual que MEJOR encaje con lo que pasó en ESTE partido; "
-        "nada de fórmulas fijas ni metáforas genéricas que no vengan a cuento.\n"
-        "- Composición POR CAPAS: una acción principal en el centro, gags secundarios a los lados y "
-        "DETALLES DE FONDO divertidos (aficionados, props, pequeñas escenas).\n"
-        "- Que se cebe con el que la cagó y celebre al héroe. El chiste sale del FÚTBOL, nunca de "
+        "- Coge la coña, mote o metáfora más potente que YA usa la crónica y conviértela en UNA imagen "
+        "clara. Inventa la metáfora visual que MEJOR encaje con lo que pasó; nada de fórmulas fijas.\n"
+        "- UN foco claro. Puedes añadir 1 detalle secundario sutil como mucho; NADA de collage "
+        "abarrotado ni mil cosas de fondo. Elegante y legible mejor que recargado.\n"
+        "- Que se cebe con el que la cagó o celebre al héroe. El chiste sale del FÚTBOL, nunca de "
         "raza/religión/nacionalidad.\n"
         "- Sin texto/letras en la imagen. No describas el estilo (lo pongo yo).\n"
         "- Refleja los hechos REALES (no inventes resultados, equipos ni jugadores). " + _NO_REALES + "\n"
-        "Devuelve SOLO la descripción de la escena, 5-8 frases bien cargadas de detalle.\n\n"
+        "Devuelve SOLO la descripción de la escena, 2-3 frases.\n\n"
         f"TITULAR: {titulo}\nCRÓNICA:\n{cuerpo[:1800]}", fallback=titulo)
 
 
