@@ -34,7 +34,9 @@ ESTILO_IMG = ("Everything is in the goat universe of 'El Salseo': characters are
               "draw a funny GOAT version of it, always keeping little goat horns and a beard. "
               "Modern flat cartoon caricature illustration, clean bold shapes, soft cel shading, "
               "expressive funny faces, humorous sports-meme vibe, warm cream background #f7f6f1, "
-              "no text, no letters, no logos, no watermarks.")
+              "no text, no letters, no logos, no watermarks. "
+              "Go for a FUNNY SITUATIONAL GAG (a comic action that roasts the loser or celebrates "
+              "the winner) rather than goats merely posing in their kits.")
 
 
 def _claude(prompt, timeout=180, fallback=""):
@@ -56,11 +58,14 @@ _NO_REALES = ("NUNCA nombres a personas reales (futbolistas, entrenadores, famos
 def concepto_desde_cronica(titulo, primer_parrafo=""):
     """Concepto visual (inglés) para un meme puntual a partir de titular + entradilla."""
     return _claude(
-        "Eres director de arte de un medio de humor futbolero (universo de cabras). A partir de "
-        "este titular y entradilla de una crónica de una porra, dame UNA sola descripción visual "
-        "en INGLÉS (2-3 frases) de una escena tipo meme que la ilustre. Describe SOLO la escena "
-        "(personajes, acción, gesto cómico); nada de texto en la imagen, nada de estilo (eso lo "
-        "pongo yo). " + _NO_REALES + " Devuelve solo la descripción, sin comillas.\n\n"
+        "Eres director de arte de un medio de humor futbolero gamberro (universo de cabras). A "
+        "partir de este titular y entradilla de una crónica de una porra, dame UNA sola descripción "
+        "visual en INGLÉS (2-3 frases) de un GAG visual con SITUACIÓN: una acción cómica concreta "
+        "que se cebe con el que la cagó o celebre a lo bestia al héroe. El chiste sale del FÚTBOL "
+        "(la cagada, el choke, el penalti fallado, la celebración, la fama del jugador), NUNCA de "
+        "la raza/religión/nacionalidad de nadie. Nada de retratos posando; quiero situación. Solo "
+        "la escena, sin texto en la imagen, sin estilo (eso lo pongo yo). " + _NO_REALES +
+        " Devuelve solo la descripción, sin comillas.\n\n"
         f"TITULAR: {titulo}\nENTRADILLA: {primer_parrafo}", fallback=titulo)
 
 
@@ -69,10 +74,11 @@ def concepto_composite(titulo, cuerpo):
     return _claude(
         "Eres director de arte de un medio de humor futbolero (universo de cabras). A partir de "
         "esta crónica de una porra, descríbeme en INGLÉS UNA sola escena tipo collage/montaje que "
-        "combine los 3-4 momentos MÁS destacados (el líder, el bombazo, el eliminado, el pichichi, "
-        "el colista...). Solo la escena, los personajes y sus gestos cómicos; sin texto en la "
-        "imagen, sin estilo. MUY IMPORTANTE: refleja los hechos REALES de la crónica, no inventes "
-        "resultados ni equipos. " + _NO_REALES + " 2-4 frases. Devuelve solo la descripción.\n\n"
+        "combine los 3-4 momentos MÁS destacados como GAGS visuales con situación (acción cómica "
+        "que se cebe con el que la cagó y celebre al héroe), no retratos posando. El chiste sale "
+        "del FÚTBOL, nunca de la raza/religión/nacionalidad. Sin texto en la imagen, sin estilo. "
+        "MUY IMPORTANTE: refleja los hechos REALES de la crónica, no inventes resultados ni "
+        "equipos. " + _NO_REALES + " 2-4 frases. Devuelve solo la descripción.\n\n"
         f"TITULAR: {titulo}\nCRÓNICA:\n{cuerpo[:1600]}", fallback=titulo)
 
 
@@ -92,13 +98,14 @@ def optimizar(path, ancho=1024):
 
 
 def _codex_prompt(out_path, concepto):
+    # Codex (modo ChatGPT) genera la imagen con SU generador nativo si se le pide a pelo;
+    # NO mencionar API/clave (el login OAuth no tiene permiso para la API de imágenes).
     return (
-        f"Tienes red. Llama a la API de imágenes de OpenAI (gpt-image-1) y guarda el PNG en "
-        f"{out_path} (sobreescribe). API key en /root/.codex/auth.json campo OPENAI_API_KEY "
-        "(Authorization: Bearer). Params: model=gpt-image-1, size=1536x1024, quality=high, n=1. "
-        "La respuesta trae data[0].b64_json -> decodifícalo y escríbelo como PNG en esa ruta. "
-        "NO dibujes formas con SVG/PIL; si la API falla, muéstrame el error tal cual.\n\n"
-        f"Prompt de la imagen (en inglés): '{concepto} {ESTILO_IMG}'"
+        "Genera una IMAGEN tipo meme con tu generador de imágenes y guárdala como PNG REAL "
+        f"(rasterizado, generado por modelo de imágenes) en {out_path} (sobreescribe si existe). "
+        "NADA de SVG ni de dibujar con código/PIL/canvas: tiene que ser una imagen generada por IA "
+        "de verdad. Formato apaisado, ~1536x1024.\n\n"
+        f"Imagen (en inglés): '{concepto} {ESTILO_IMG}'"
     )
 
 
