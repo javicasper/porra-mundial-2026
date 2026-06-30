@@ -36,7 +36,9 @@ ESTILO_IMG = ("Everything is in the goat universe of 'El Salseo': characters are
               "expressive funny faces, humorous sports-meme vibe, warm cream background #f7f6f1, "
               "no text, no letters, no logos, no watermarks. "
               "Go for a FUNNY SITUATIONAL GAG (a comic action that roasts the loser or celebrates "
-              "the winner) rather than goats merely posing in their kits.")
+              "the winner) rather than goats merely posing in their kits. Make it RICH and DETAILED, "
+              "like a busy comic poster: layered scene, expressive characters and fun background "
+              "gags and props.")
 
 
 def _claude(prompt, timeout=180, fallback=""):
