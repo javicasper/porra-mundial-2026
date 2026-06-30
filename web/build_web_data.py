@@ -67,7 +67,14 @@ def fetch_api():
 def build_partidos(matches):
     out = []
     for m in matches:
-        ft = m["score"]["fullTime"]
+        sc = m.get("score") or {}
+        ft = sc.get("fullTime") or {}
+        # Para la PORRA cuenta el marcador de los 90' (reglamentario): si hubo prórroga o
+        # penaltis, football-data lo da en 'regularTime'; si no, 'fullTime' ya son los 90'.
+        reg = sc.get("regularTime")
+        m90 = reg if reg else ft
+        pens = sc.get("penalties") or {}
+        dur = sc.get("duration")
         fin = m["status"] == "FINISHED"
         live = m["status"] in ("IN_PLAY", "PAUSED")
         show = fin or live
@@ -81,8 +88,14 @@ def build_partidos(matches):
             "visitante": es(m["awayTeam"]["name"]) if m["awayTeam"].get("name") else None,
             "tlaLocal": m["homeTeam"].get("tla"),       # código FIFA (ESP, BRA...) para casar el directo
             "tlaVisitante": m["awayTeam"].get("tla"),
-            "golesLocal": ft.get("home") if show else None,
-            "golesVisitante": ft.get("away") if show else None,
+            "golesLocal": m90.get("home") if show else None,        # 90' (lo que cuenta para la porra)
+            "golesVisitante": m90.get("away") if show else None,
+            # Final con prórroga/penaltis (solo si difiere de los 90', para mostrarlo aparte):
+            "golesLocalFull": ft.get("home") if (show and reg) else None,
+            "golesVisitanteFull": ft.get("away") if (show and reg) else None,
+            "penaltisLocal": pens.get("home") if (fin and dur == "PENALTY_SHOOTOUT") else None,
+            "penaltisVisitante": pens.get("away") if (fin and dur == "PENALTY_SHOOTOUT") else None,
+            "decidido": dur if fin else None,   # REGULAR / EXTRA_TIME / PENALTY_SHOOTOUT
             "status": m["status"],
             "jugado": fin,
             "envivo": live,
@@ -192,9 +205,13 @@ def overlay_espn(partidos, espn):
             p["stats"] = e.get("stats")
             p["colores"] = e.get("colores")
         elif e["state"] == "post":
+            fd_fin = p.get("status") == "FINISHED"  # football-data ya lo cerró (trae el 90' correcto)
             p["envivo"], p["jugado"], p["status"], p["minuto"] = False, True, "FINISHED", None
-            if e["home"] is not None: p["golesLocal"] = e["home"]
-            if e["away"] is not None: p["golesVisitante"] = e["away"]
+            # Solo cogemos el marcador de ESPN si football-data aún no lo tenía cerrado, para no
+            # pisar el resultado de los 90' (ESPN daría el agregado con penaltis).
+            if not fd_fin:
+                if e["home"] is not None: p["golesLocal"] = e["home"]
+                if e["away"] is not None: p["golesVisitante"] = e["away"]
             p["eventos"] = e.get("eventos") or None
             p["stats"] = e.get("stats")
             p["colores"] = e.get("colores")

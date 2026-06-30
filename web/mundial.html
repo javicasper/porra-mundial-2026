@@ -94,10 +94,11 @@ function crBox(win, putc, proy){
   let r1,r2,foot,cls="";
   if(real && real.local && real.visitante){     // equipos reales: SOLO si están los dos (no parcial)
     const show=real.jugado||real.envivo;
-    const hw=real.jugado&&real.golesLocal>real.golesVisitante, aw=real.jugado&&real.golesVisitante>real.golesLocal;
+    const hw=real.jugado&&(real.ganador?real.ganador==="local":real.golesLocal>real.golesVisitante);
+    const aw=real.jugado&&(real.ganador?real.ganador==="visitante":real.golesVisitante>real.golesLocal);
     r1=row(real.local, show?real.golesLocal:null, hw, real.local);
     r2=row(real.visitante, show?real.golesVisitante:null, aw, real.visitante);
-    foot = real.jugado ? `<div class="bx-t">FINAL</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${fechaCorta(n[2])} · ${hora(n[2])}</div>`);
+    foot = real.jugado ? `<div class="bx-t">${finExtra(real)}</div>` : (real.envivo?`<div class="bx-t lv">● ${liveMinute(real)}</div>`:`<div class="bx-t">${fechaCorta(n[2])} · ${hora(n[2])}</div>`);
   }else if(pj && !R32_DRAWN){                    // proyección (solo antes del sorteo real): lado fijo normal, dudoso dorado
     const lp=!pj.localFijo, vp=!pj.visitanteFijo, dud=lp||vp;
     cls = dud ? " prov" : "";
@@ -128,10 +129,14 @@ function cruces(d){
 }
 
 /* --- resultados / calendario --- */
-function wc(p,s){ if(!p.jugado||p.golesLocal===p.golesVisitante) return ""; const hw=p.golesLocal>p.golesVisitante; return (s==="h"?hw:!hw)?"win":""; }
+function wc(p,s){ if(!p.jugado) return ""; if(p.ganador) return (s==="h"?p.ganador==="local":p.ganador==="visitante")?"win":""; if(p.golesLocal===p.golesVisitante) return ""; const hw=p.golesLocal>p.golesVisitante; return (s==="h"?hw:!hw)?"win":""; }
+function finExtra(p){ // si hubo prórroga/penaltis, el resultado final (los 90' van en .s)
+  if(p.golesLocalFull==null) return "FINAL";
+  return `${p.golesLocalFull}-${p.golesVisitanteFull} ${p.penaltisLocal!=null?'pen':'pró'}`;
+}
 function box(p){
   if(p.status==="IN_PLAY"||p.status==="PAUSED") return `<div class="bx2" data-live="${liveKey(p)}"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="lv">● ${liveMinute(p)}</div></div>`;
-  if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">FINAL</div></div>`;
+  if(p.jugado) return `<div class="bx2"><div class="s">${p.golesLocal}-${p.golesVisitante}</div><div class="ft">${finExtra(p)}</div></div>`;
   return `<div class="bx2"><div class="t">${hora(p.utc)}</div></div>`;
 }
 function matchRow(p, withPreds){
