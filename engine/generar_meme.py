@@ -72,16 +72,24 @@ def concepto_desde_cronica(titulo, primer_parrafo=""):
 
 
 def concepto_composite(titulo, cuerpo):
-    """Concepto visual (inglés) para la imagen PRINCIPAL: un montaje que refleje TODO."""
+    """Concepto visual (inglés) para la imagen PRINCIPAL: un póster cómico RICO y detallado."""
     return _claude(
-        "Eres director de arte de un medio de humor futbolero (universo de cabras). A partir de "
-        "esta crónica de una porra, descríbeme en INGLÉS UNA sola escena tipo collage/montaje que "
-        "combine los 3-4 momentos MÁS destacados como GAGS visuales con situación (acción cómica "
-        "que se cebe con el que la cagó y celebre al héroe), no retratos posando. El chiste sale "
-        "del FÚTBOL, nunca de la raza/religión/nacionalidad. Sin texto en la imagen, sin estilo. "
-        "MUY IMPORTANTE: refleja los hechos REALES de la crónica, no inventes resultados ni "
-        "equipos. " + _NO_REALES + " 2-4 frases. Devuelve solo la descripción.\n\n"
-        f"TITULAR: {titulo}\nCRÓNICA:\n{cuerpo[:1600]}", fallback=titulo)
+        "Eres director de arte de un medio de humor futbolero gamberro (universo de cabras). A partir "
+        "de esta crónica de una porra, descríbeme en INGLÉS la escena de UN PÓSTER CÓMICO rico y muy "
+        "detallado que combine los momentos clave del partido/ronda como GAGS visuales con situación. "
+        "INSTRUCCIONES:\n"
+        "- Convierte las coñas de la crónica en METÁFORAS VISUALES potentes (p.ej. un equipo soso = "
+        "máquina oxidada que se desmonta; un killer frío = robot Terminator; un eliminado = Cenicienta "
+        "huyendo a medianoche; un portero figura = muro de ladrillos o superhéroe; un penalti fallado "
+        "= balón disparado a la luna).\n"
+        "- Composición POR CAPAS: una acción principal en el centro, gags secundarios a los lados y "
+        "DETALLES DE FONDO divertidos (aficionados, props, pequeñas escenas).\n"
+        "- Que se cebe con el que la cagó y celebre al héroe. El chiste sale del FÚTBOL, nunca de "
+        "raza/religión/nacionalidad.\n"
+        "- Sin texto/letras en la imagen. No describas el estilo (lo pongo yo).\n"
+        "- Refleja los hechos REALES (no inventes resultados, equipos ni jugadores). " + _NO_REALES + "\n"
+        "Devuelve SOLO la descripción de la escena, 5-8 frases bien cargadas de detalle.\n\n"
+        f"TITULAR: {titulo}\nCRÓNICA:\n{cuerpo[:1800]}", fallback=titulo)
 
 
 def optimizar(path, ancho=1024):
