@@ -26,6 +26,20 @@ services:
                sleep 30;
              done"
 
+  # Servidor MCP (solo lectura) para enchufar la porra a ChatGPT / Claude / etc.
+  # Solo stdlib; lee web/data.json y web/noticias.json (mismo volumen que el resto).
+  porra-mcp:
+    image: python:3.12-alpine
+    container_name: porra-mcp
+    restart: unless-stopped
+    working_dir: /app
+    networks: [proxy]
+    expose:
+      - "8000"
+    volumes:
+      - .:/app
+    command: python mcp_server.py
+
 networks:
   proxy:
     external: true
